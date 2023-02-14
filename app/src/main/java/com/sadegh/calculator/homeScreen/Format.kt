@@ -1,44 +1,45 @@
 package com.sadegh.calculator.homeScreen
 
+import android.util.Log
 import kotlin.math.min
-
 
 fun List<String>.separateAllThreeDigitsOfNumberWithComma(): List<String> {
 
-    if ("can not divide by zero" in this) {
+    if (this.singleOrNull() == ResultType.undefined) {
         return this
     }
 
-    val newInput = this.map { numberOrOperator ->
+    return this.map { numberOrOperator ->
 
         if (numberOrOperator in arrayOf("/", "x", "-", "+", '=')) {
-
             return@map numberOrOperator
-
         }
-
-        var integerPartAfterSeparatingWithComma = ""
 
         val pointIndex = numberOrOperator.indexOf(".")
         val integerPartLength = if (pointIndex != -1) pointIndex else numberOrOperator.length
-
         val integerPart = numberOrOperator.take(integerPartLength)
         val decimalPart = numberOrOperator.drop(integerPartLength)
 
-        integerPart.forEachIndexed { digitIndex, digit ->
+        buildString {
 
-            integerPartAfterSeparatingWithComma += digit
+            for ((digitIndex,digit) in integerPart.withIndex()) {
 
-            val integerPartOfNumberLastIndex = integerPart.lastIndex
-            if ((integerPartOfNumberLastIndex - digitIndex) % 3 == 0 && digitIndex != integerPartOfNumberLastIndex) {
-                integerPartAfterSeparatingWithComma += ","
+                if(digit=='-'){
+                    append('-')
+                    continue
+                }
+                append(digit)
+
+                val integerPartOfNumberLastIndex = integerPart.lastIndex
+                if ((integerPartOfNumberLastIndex - digitIndex) % 3 == 0 &&
+                    digitIndex != integerPartOfNumberLastIndex
+                ) {
+                    append(',')
+                }
             }
+            append(decimalPart)
         }
-        "$integerPartAfterSeparatingWithComma$decimalPart"
-
     }
-
-    return newInput
 }
 
 /**
@@ -47,11 +48,12 @@ fun List<String>.separateAllThreeDigitsOfNumberWithComma(): List<String> {
  *if all the digits of a number do not fit in one line,
  *it moves that number along with the operator before it to the next line.
  */
-fun List<String>.formatInput(): String {
+
+fun String.formatInput(): String {
 
     var lastBackSlashIndex = -1
     var lastOperatorIndex = -1
-    var inputAsString = this.joinToString("")
+    var inputAsString = this
     var index = 0
     while (index < inputAsString.length) {
 

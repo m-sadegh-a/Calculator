@@ -16,13 +16,11 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun Buttons(
     modifier: Modifier,
-    buttonsText: Array<Array<String>>,
-    input: MutableList<String>,
-    updateInput: (MutableList<String>) -> Unit,
-    result: String,
-    updateResult: (String) -> Unit,
+    screen: Screen,
+    buttons: Array<Array<Button>>,
+    updateScreen: (Screen) -> Unit
 
-    ) {
+) {
 
     Column(
         modifier = modifier
@@ -32,7 +30,7 @@ fun Buttons(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        for (row in buttonsText.indices) {
+        for (row in buttons.indices) {
 
             Row(
                 modifier = Modifier
@@ -42,34 +40,31 @@ fun Buttons(
                 horizontalArrangement = Arrangement.Start
             ) {
 
-                for (buttonText in buttonsText[row]) {
-
-                    val buttonWeight = if (buttonText == "AC" || buttonText == "0") 2f else 1f
-
-                    val buttonColor = getButtonColor(
-                        buttonsText = buttonsText,
-                        buttonText = buttonText,
-                        buttonTextRow = row
-                    )
-
+                for (button in buttons[row]) {
 
                     TextButton(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .weight(buttonWeight)
+                            .weight(button.weight)
                             .padding(vertical = 5.dp, horizontal = 7.dp)
                             .clip(RoundedCornerShape(30.dp))
-                            .background(buttonColor),
+                            .background(button.color),
                         onClick = {
 
-                            onClickChange(input, buttonText, updateInput, result, updateResult)
+                            screen.onClickButtonChange(button.symbol)
+                            updateScreen(
+                                Screen(
+                                    result = screen.result,
+                                    input = screen.input
+                                )
+                            )
 
                         },
 
                         ) {
 
                         Text(
-                            text = buttonText,
+                            text = button.symbol,
                             fontSize = 30.sp,
                             color = Color.White,
                         )
@@ -80,19 +75,6 @@ fun Buttons(
     }
 }
 
-fun getButtonColor(
-    buttonsText: Array<Array<String>>,
-    buttonText: String,
-    buttonTextRow: Int
-) = when (buttonText) {
-
-    "AC", "DEL" -> Color.Gray
-
-    buttonsText[buttonTextRow].last() -> Color(0xFFFF8C01)
-
-    else -> Color.DarkGray
-
-}
 
 
 

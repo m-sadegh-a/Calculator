@@ -1,6 +1,5 @@
 package com.sadegh.calculator.homeScreen
 
-import android.util.Log
 import kotlin.math.min
 
 fun List<String>.separateAllThreeDigitsOfNumberWithComma(): List<String> {
@@ -11,7 +10,7 @@ fun List<String>.separateAllThreeDigitsOfNumberWithComma(): List<String> {
 
     return this.map { numberOrOperator ->
 
-        if (numberOrOperator in arrayOf("/", "x", "-", "+", '=')) {
+        if (numberOrOperator in arrayOf("÷", "x", "-", "+", '=')) {
             return@map numberOrOperator
         }
 
@@ -22,9 +21,9 @@ fun List<String>.separateAllThreeDigitsOfNumberWithComma(): List<String> {
 
         buildString {
 
-            for ((digitIndex,digit) in integerPart.withIndex()) {
+            for ((digitIndex, digit) in integerPart.withIndex()) {
 
-                if(digit=='-'){
+                if (digit == '-') {
                     append('-')
                     continue
                 }
@@ -57,7 +56,7 @@ fun String.formatInput(): String {
     var index = 0
     while (index < inputAsString.length) {
 
-        if (inputAsString[index] in arrayOf('/', 'x', '-', '+', '=')) {
+        if (inputAsString[index] in arrayOf('÷', 'x', '-', '+', '=')) {
             lastOperatorIndex = index
         }
 
@@ -78,7 +77,7 @@ fun String.formatInput(): String {
 
                 }
 
-                in arrayOf('/', 'x', '-', '+', '=') -> {
+                in arrayOf('÷', 'x', '-', '+', '=') -> {
 
                     inputAsString = inputAsString.addNewLineToString(index + 1)
                     lastBackSlashIndex = index + 1

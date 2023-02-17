@@ -1,6 +1,5 @@
 package com.sadegh.calculator.homeScreen
 
-import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
@@ -59,17 +58,17 @@ class Screen(var input: MutableList<String>, var result: String = "") {
 
         when (buttonSymbol) {
 
-            "AC" -> clean()
+            "C" -> clean()
 
             in "0".."9" -> addDigit(buttonSymbol)
 
             "." -> addPoint()
 
-            "DEL" -> deleteLastInput()
-
-            "/", "x", "-", "+" -> addOperator(buttonSymbol)
+            "÷", "x", "-", "+" -> addOperator(buttonSymbol)
 
             "=" -> addEqual()
+
+            else -> deleteLastInput()
 
         }
     }
@@ -182,7 +181,7 @@ class Screen(var input: MutableList<String>, var result: String = "") {
         }
 
         val operatorsSymbol = arrayOf(
-            arrayOf("/", "x"),
+            arrayOf("÷", "x"),
             arrayOf("-", "+")
         )
 
@@ -202,9 +201,8 @@ class Screen(var input: MutableList<String>, var result: String = "") {
 
                     val number1 = newInput[index - 1].toDouble()
                     val number2 = newInput[index + 1].toDouble()
-                    Log.d("input", "number2 : $number2")
 
-                    if (number2 == 0.0 && numberOrOperator == "/") {
+                    if (number2 == 0.0 && numberOrOperator == "÷") {
                         return ResultType.undefined
                     }
 
@@ -230,7 +228,7 @@ class Screen(var input: MutableList<String>, var result: String = "") {
 
     private fun isLastInputEqual() = lastElement == "="
 
-    private fun isLastInputAnOperator() = lastElement in arrayOf("/", "x", "-", "+")
+    private fun isLastInputAnOperator() = lastElement in arrayOf("÷", "x", "-", "+")
 
     private fun isResultUndefined() = result == ResultType.undefined
 

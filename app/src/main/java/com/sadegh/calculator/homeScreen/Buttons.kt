@@ -3,13 +3,14 @@ package com.sadegh.calculator.homeScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -51,7 +52,7 @@ fun Buttons(
                             .background(button.color),
                         onClick = {
 
-                            screen.onClickButtonChange(button.symbol)
+                            screen.onClickButtonChange(button.symbolAsString)
                             updateScreen(
                                 Screen(
                                     result = screen.result,
@@ -63,11 +64,20 @@ fun Buttons(
 
                         ) {
 
-                        Text(
-                            text = button.symbol,
-                            fontSize = 30.sp,
-                            color = Color.White,
-                        )
+                        if (button.symbolAsIconId != null) {
+                            Icon(
+                                painter = painterResource(id = button.symbolAsIconId),
+                                contentDescription = null,
+                                tint = button.contentColor,
+                                modifier = Modifier.size(button.iconSize)
+                            )
+                        } else {
+                            Text(
+                                text = button.symbolAsString,
+                                fontSize = 30.sp,
+                                color = button.contentColor,
+                            )
+                        }
                     }
                 }
             }

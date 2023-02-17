@@ -8,6 +8,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.calculator.R
+import com.sadegh.calculator.ui.theme.operatorColor
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
@@ -34,24 +36,74 @@ fun HomeScreen() {
             topText = screenState.formattedInput,
             topTextFontSize = screenState.inputFontSize!!,
             topTextColor = screenState.inputTextColor,
-            bottomText =  screenState.formattedResult,
+            bottomText = screenState.formattedResult,
             bottomTextFontSize = screenState.resultFontSize,
             bottomTextColor = screenState.resultTextColor
         )
 
-        val buttonsText = arrayOf(
-            arrayOf("AC", "DEL", "/"),
-            arrayOf("7", "8", "9", "x"),
-            arrayOf("4", "5", "6", "-"),
-            arrayOf("1", "2", "3", "+"),
-            arrayOf("0", ".", "=")
+        val buttons = arrayOf(
+            arrayOf(
+                Button(
+                    symbolAsString = "C",
+                    contentColor = Color.Black,
+                    color = Color.Gray,
+                    weight = 2f
+                ),
+                Button(
+                    symbolAsString = "DEL",
+                    symbolAsIconId = R.drawable.ic_backspace,
+                    iconSize = 40.dp,
+                    contentColor = Color.Black,
+                    color = Color.Gray
+                ),
+                Button(
+                    symbolAsString = "÷",
+                    symbolAsIconId = R.drawable.ic_divide,
+                    iconSize = 35.dp,
+                    color = operatorColor
+                )
+            ),
+            arrayOf(
+                Button(symbolAsString = "7"),
+                Button(symbolAsString = "8"),
+                Button(symbolAsString = "9"),
+                Button(
+                    symbolAsString = "x",
+                    symbolAsIconId = R.drawable.ic_multiply,
+                    color = operatorColor
+                )
+            ),
+            arrayOf(
+                Button(symbolAsString = "4"),
+                Button(symbolAsString = "5"),
+                Button(symbolAsString = "6"),
+                Button(
+                    symbolAsString = "-",
+                    symbolAsIconId = R.drawable.ic_minus,
+                    color = operatorColor
+                )
+            ),
+            arrayOf(
+                Button(symbolAsString = "1"),
+                Button(symbolAsString = "2"),
+                Button(symbolAsString = "3"),
+                Button(
+                    symbolAsString = "+",
+                    symbolAsIconId = R.drawable.ic_add,
+                    iconSize = 25.dp,
+                    color = operatorColor
+                )
+            ),
+            arrayOf(
+                Button(symbolAsString = "0", weight = 2f),
+                Button(symbolAsString = "."),
+                Button(
+                    symbolAsString = "=",
+                    symbolAsIconId = R.drawable.ic_equal,
+                    color = operatorColor
+                )
+            ),
         )
-
-        val buttons = Array(5) { row ->
-            Array(buttonsText[row].size) { column ->
-                Button(buttonsText[row][column])
-            }
-        }
 
         Buttons(
             modifier = Modifier.fillMaxSize(),

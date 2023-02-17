@@ -6,7 +6,7 @@ class Operator(private val symbol: String) {
 
         private val operatorMap = mapOf(
 
-            "/" to { number1: Double, number2: Double -> number1 / number2},
+            "÷" to { number1: Double, number2: Double -> number1 / number2},
             "x" to { number1: Double, number2: Double -> number1 * number2 },
             "-" to { number1: Double, number2: Double -> number1 - number2 },
             "+" to { number1: Double, number2: Double -> number1 + number2 },

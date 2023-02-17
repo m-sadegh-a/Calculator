@@ -1,21 +1,14 @@
 package com.sadegh.calculator.homeScreen
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
-data class Button(val symbol: String) {
-
-    val weight: Float
-        get() = if (symbol == "AC" || symbol == "0") 2f else 1f
-
-    val color: Color
-        get() =
-            when (symbol) {
-
-                "AC", "DEL" -> Color.Gray
-
-                in arrayOf("/", "x", "-", "+", "=") -> Color(0xFFFF8C01)
-
-                else -> Color.DarkGray
-
-            }
-}
+data class Button(
+    val symbolAsString: String,
+    val symbolAsIconId: Int? = null,
+    val iconSize: Dp = 30.dp,
+    val contentColor: Color = Color.White,
+    val weight: Float = 1f,
+    val color: Color = Color.DarkGray
+)

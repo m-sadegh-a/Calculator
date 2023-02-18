@@ -43,6 +43,14 @@ fun HomeScreen() {
 
         val buttons = arrayOf(
             arrayOf(
+                Button(""),
+                Button(""),
+                Button(""),
+                Button(""),
+                Button(""),
+            ),
+            arrayOf(
+                Button(""),
                 Button(
                     symbolAsString = "C",
                     contentColor = Color.Black,
@@ -52,7 +60,7 @@ fun HomeScreen() {
                     symbolAsString = "%",
                     symbolAsIconId = R.drawable.ic_percent,
                     contentColor = Color.Black,
-                    color=Color.Gray
+                    color = Color.Gray
                 ),
                 Button(
                     symbolAsString = "DEL",
@@ -69,6 +77,7 @@ fun HomeScreen() {
                 )
             ),
             arrayOf(
+                Button(""),
                 Button(symbolAsString = "7"),
                 Button(symbolAsString = "8"),
                 Button(symbolAsString = "9"),
@@ -79,6 +88,7 @@ fun HomeScreen() {
                 )
             ),
             arrayOf(
+                Button(""),
                 Button(symbolAsString = "4"),
                 Button(symbolAsString = "5"),
                 Button(symbolAsString = "6"),
@@ -89,6 +99,7 @@ fun HomeScreen() {
                 )
             ),
             arrayOf(
+                Button(""),
                 Button(symbolAsString = "1"),
                 Button(symbolAsString = "2"),
                 Button(symbolAsString = "3"),
@@ -100,7 +111,9 @@ fun HomeScreen() {
                 )
             ),
             arrayOf(
-                Button(symbolAsString = "0", weight = 2f),
+                Button(""),
+                Button(symbolAsString = "more", symbolAsIconId = R.drawable.ic_show_more_operator),
+                Button(symbolAsString = "0"),
                 Button(symbolAsString = "."),
                 Button(
                     symbolAsString = "=",

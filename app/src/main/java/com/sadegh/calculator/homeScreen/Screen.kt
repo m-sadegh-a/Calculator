@@ -56,7 +56,7 @@ class Screen(var input: MutableList<String>, var result: String = "") {
 
     val resultTextColor = if (isLastInputEqual()) Color.White else Color.Gray
 
-    fun onClickButtonChange(buttonSymbol: String) {
+    fun onClickButtonChange(buttonSymbol: String, startIndex: Int, changeStartIndex: (Int) -> Unit) {
 
         when (buttonSymbol) {
 
@@ -71,6 +71,8 @@ class Screen(var input: MutableList<String>, var result: String = "") {
             in "0".."9" -> addDigit(buttonSymbol)
 
             "." -> addPoint()
+
+            "more" -> onClickMoreButtonChange(startIndex, changeStartIndex)
 
             "=" -> addEqual()
 
@@ -176,6 +178,11 @@ class Screen(var input: MutableList<String>, var result: String = "") {
 
             input += buttonSymbol
         }
+    }
+
+    private fun onClickMoreButtonChange(startIndex: Int, changeStartIndex: (Int) -> Unit) {
+
+        changeStartIndex((startIndex + 1) % 2)
     }
 
     private fun addEqual() {

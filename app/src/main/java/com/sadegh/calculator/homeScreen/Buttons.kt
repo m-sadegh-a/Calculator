@@ -6,7 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,36 +23,47 @@ fun Buttons(
 
 ) {
 
+    var startIndex by remember {
+
+        mutableStateOf(1)
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(7.dp),
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        for (row in buttons.indices) {
+        for (row in startIndex until buttons.size) {
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
+                horizontalArrangement = Arrangement.End
             ) {
 
-                for (button in buttons[row]) {
+                for (column in startIndex until buttons[row].size) {
 
+                    val button = buttons[row][column]
                     TextButton(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .weight(button.weight)
+                            .weight(1f)
                             .padding(vertical = 5.dp, horizontal = 7.dp)
-                            .clip(RoundedCornerShape(30.dp))
+                            .clip(RoundedCornerShape(if (startIndex == 1) 30.dp else 20.dp))
                             .background(button.color),
                         onClick = {
 
-                            screen.onClickButtonChange(button.symbolAsString)
+                            screen.onClickButtonChange(
+                                button.symbolAsString,
+                                startIndex
+                            ) {
+                                startIndex = it
+                            }
                             updateScreen(
                                 Screen(
                                     result = screen.result,
@@ -84,6 +95,7 @@ fun Buttons(
         }
     }
 }
+
 
 
 

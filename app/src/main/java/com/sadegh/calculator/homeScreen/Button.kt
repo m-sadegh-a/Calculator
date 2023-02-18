@@ -9,6 +9,5 @@ data class Button(
     val symbolAsIconId: Int? = null,
     val iconSize: Dp = 30.dp,
     val contentColor: Color = Color.White,
-    val weight: Float = 1f,
     val color: Color = Color.DarkGray
 )

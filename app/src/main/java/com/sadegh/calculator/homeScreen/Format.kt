@@ -10,7 +10,7 @@ fun List<String>.separateAllThreeDigitsOfNumberWithComma(): List<String> {
 
     return this.map { numberOrOperator ->
 
-        if (numberOrOperator in arrayOf("÷", "x", "-", "+", '=')) {
+        if (numberOrOperator in arrayOf("÷", "x", "-", "+", '=','%')) {
             return@map numberOrOperator
         }
 
@@ -56,12 +56,11 @@ fun String.formatInput(): String {
     var index = 0
     while (index < inputAsString.length) {
 
-        if (inputAsString[index] in arrayOf('÷', 'x', '-', '+', '=')) {
+        if (inputAsString[index] in arrayOf('÷', 'x', '-', '+', '=','%')) {
             lastOperatorIndex = index
         }
 
         val maximumCharacterCountPerLine = index - lastBackSlashIndex
-
         if (maximumCharacterCountPerLine == 20) {
 
             when (inputAsString.getOrNull(index + 1)) {
@@ -77,7 +76,7 @@ fun String.formatInput(): String {
 
                 }
 
-                in arrayOf('÷', 'x', '-', '+', '=') -> {
+                in arrayOf('÷', 'x', '-', '+', '=','%') -> {
 
                     inputAsString = inputAsString.addNewLineToString(index + 1)
                     lastBackSlashIndex = index + 1

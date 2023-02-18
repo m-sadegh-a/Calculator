@@ -47,7 +47,12 @@ fun HomeScreen() {
                     symbolAsString = "C",
                     contentColor = Color.Black,
                     color = Color.Gray,
-                    weight = 2f
+                ),
+                Button(
+                    symbolAsString = "%",
+                    symbolAsIconId = R.drawable.ic_percent,
+                    contentColor = Color.Black,
+                    color=Color.Gray
                 ),
                 Button(
                     symbolAsString = "DEL",

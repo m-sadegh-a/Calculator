@@ -1,4 +1,4 @@
-package com.sadegh.calculator.presentation
+package com.sadegh.calculator.presentation.main_screen
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -11,8 +11,8 @@ import androidx.compose.ui.unit.dp
 import com.example.calculator.R
 import com.sadegh.calculator.homeScreen.Button
 import com.sadegh.calculator.homeScreen.Screen
-import com.sadegh.calculator.presentation.components.Buttons
-import com.sadegh.calculator.presentation.components.ResultBox
+import com.sadegh.calculator.presentation.main_screen.components.Buttons
+import com.sadegh.calculator.presentation.main_screen.components.ResultBox
 import com.sadegh.calculator.ui.theme.operatorColor
 
 @SuppressLint("MutableCollectionMutableState")

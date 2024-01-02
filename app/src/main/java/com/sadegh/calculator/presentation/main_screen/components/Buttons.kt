@@ -1,4 +1,4 @@
-package com.sadegh.calculator.presentation.components
+package com.sadegh.calculator.presentation.main_screen.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

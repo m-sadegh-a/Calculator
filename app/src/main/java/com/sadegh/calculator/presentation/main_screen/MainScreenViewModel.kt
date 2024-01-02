@@ -8,17 +8,17 @@ import kotlinx.coroutines.flow.asStateFlow
 @HiltViewModel
 class MainScreenViewModel : ViewModel() {
 
-    private val _input= MutableStateFlow("")
-    val input=_input.asStateFlow()
+    private val _input = MutableStateFlow("")
+    val input = _input.asStateFlow()
 
-    private val _result= MutableStateFlow("")
-    val result=_result.asStateFlow()
+    private val _result = MutableStateFlow("")
+    val result = _result.asStateFlow()
 
-    fun onEvent(event:UserEvent){
+    fun onEvent(event: UserEvent) {
 
-        when(event){
+        when (event) {
             UserEvent.OnButtonsExpansionButtonClick -> TODO()
-            UserEvent.OnClearButtonClick -> TODO()
+            UserEvent.OnClearButtonClick -> onClearButtonClick()
             UserEvent.OnDeleteButtonClick -> TODO()
             UserEvent.OnDivisionButtonClick -> TODO()
             UserEvent.OnEqualButtonClick -> TODO()
@@ -38,5 +38,11 @@ class MainScreenViewModel : ViewModel() {
             UserEvent.OnPlusButtonClick -> TODO()
             UserEvent.OnPointButtonClick -> TODO()
         }
+    }
+
+    private fun onClearButtonClick() {
+
+        _input.value = "0"
+        _result.value = ""
     }
 }

@@ -1,4 +1,4 @@
-package com.sadegh.calculator.homeScreen
+package com.sadegh.calculator.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,6 +13,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sadegh.calculator.homeScreen.Button
+import com.sadegh.calculator.homeScreen.Screen
 
 @Composable
 fun Buttons(

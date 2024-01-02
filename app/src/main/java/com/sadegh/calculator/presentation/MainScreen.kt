@@ -1,4 +1,4 @@
-package com.sadegh.calculator.homeScreen
+package com.sadegh.calculator.presentation
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
@@ -9,6 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.calculator.R
+import com.sadegh.calculator.homeScreen.Button
+import com.sadegh.calculator.homeScreen.Screen
+import com.sadegh.calculator.presentation.components.Buttons
+import com.sadegh.calculator.presentation.components.ResultBox
 import com.sadegh.calculator.ui.theme.operatorColor
 
 @SuppressLint("MutableCollectionMutableState")

@@ -7,14 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.sadegh.calculator.homeScreen.Operator
 import com.sadegh.calculator.homeScreen.ResultType
 import com.sadegh.calculator.homeScreen.formatInput
+import com.sadegh.calculator.homeScreen.formatResult
 import com.sadegh.calculator.homeScreen.separateAllThreeDigitsOfNumberWithComma
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 
@@ -36,7 +34,21 @@ class MainScreenViewModel : ViewModel() {
         )
 
     private val _result = MutableStateFlow("")
-    val result = _result.asStateFlow()
+    val result = _result
+        .transform {
+
+            val formattedResult = mutableListOf(it)
+                .separateAllThreeDigitsOfNumberWithComma()
+                .single()
+                .formatResult()
+
+            emit(formattedResult)
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            ""
+        )
 
     private val _startIndex = MutableStateFlow(1)
     val startIndex = _startIndex.asStateFlow()

@@ -35,7 +35,7 @@ class MainScreenViewModel : ViewModel() {
             UserEvent.OnDeleteButtonClick -> onDeleteButtonClick()
             UserEvent.OnEqualButtonClick -> TODO()
             UserEvent.OnPercentButtonClick -> onPercentButtonClick()
-            UserEvent.OnPointButtonClick -> TODO()
+            UserEvent.OnPointButtonClick ->onPointButtonClick()
             is UserEvent.OnNumberButtonClick -> onNumberButtonClick(event.number)
             is UserEvent.OnOperatorButtonClick -> onOperatorButtonClick(event.symbol)
         }
@@ -122,16 +122,34 @@ class MainScreenViewModel : ViewModel() {
 
             isLastInputAnOperator() || isLastInputPercent() -> {
 
-                _input.value=(_input.value+number.toString()).toMutableList()
+                _input.value = (_input.value + number.toString()).toMutableList()
             }
 
             else -> {
-                val newLastElement="$lastElement$number"
-                _input.value=(_input.value.dropLast(1)+newLastElement).toMutableList()
+                val newLastElement = "$lastElement$number"
+                _input.value = (_input.value.dropLast(1) + newLastElement).toMutableList()
             }
         }
 
         _result.value = calculateResult()
+    }
+
+    private fun onPointButtonClick() {
+
+        when {
+            lastElement.length == 15 || "." in lastElement -> return
+
+            isLastInputEqual() -> _input.value = mutableListOf("0.")
+
+            isLastInputAnOperator() || isLastInputPercent() -> {
+                _input.value = (_input.value + "0.").toMutableList()
+            }
+
+            else -> {
+                val newLastElement = "$lastElement."
+                _input.value = (_input.value + newLastElement).toMutableList()
+            }
+        }
     }
 
     private fun calculateResult(): String {

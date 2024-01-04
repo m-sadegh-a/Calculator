@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 @HiltViewModel
 class MainScreenViewModel : ViewModel() {
 
-    private val _input = MutableStateFlow(emptyList<String>())
+    private val _input = MutableStateFlow(mutableListOf<String>())
     val input = _input.asStateFlow()
 
     private val _result = MutableStateFlow("")
@@ -24,6 +24,8 @@ class MainScreenViewModel : ViewModel() {
     private fun isResultUndefined() = result.value == ResultType.undefined
     private fun isClean() = input.value == mutableListOf("0")
     private fun isLastInputAnOperator() = lastElement in arrayOf("÷", "x", "-", "+")
+
+    private fun isLastInputEqual() = lastElement == "="
 
     fun onEvent(event: UserEvent) {
 
@@ -45,7 +47,7 @@ class MainScreenViewModel : ViewModel() {
             UserEvent.OnNumber7ButtonClick -> TODO()
             UserEvent.OnNumber8ButtonClick -> TODO()
             UserEvent.OnNumber9ButtonClick -> TODO()
-            UserEvent.OnPercentButtonClick -> TODO()
+            UserEvent.OnPercentButtonClick -> onPercentButtonClick()
             UserEvent.OnPlusButtonClick -> TODO()
             UserEvent.OnPointButtonClick -> TODO()
         }
@@ -55,6 +57,28 @@ class MainScreenViewModel : ViewModel() {
 
         _input.value = mutableListOf("0")
         _result.value = ""
+    }
+
+    private fun onPercentButtonClick() {
+
+        if (isLastInputEqual()) {
+            _input.value = if (result.value != ResultType.undefined) {
+                mutableListOf(result.value, "%")
+            } else {
+                mutableListOf("0", "%")
+            }
+            return
+        }
+
+        if (lastElement.last() == '.') {
+
+            _input.value[input.value.lastIndex] = lastElement.dropLast(1)
+
+        }
+
+        _input.value = (_input.value + "%").toMutableList()
+
+        _result.value = calculateResult()
     }
 
     private fun calculateResult(): String {

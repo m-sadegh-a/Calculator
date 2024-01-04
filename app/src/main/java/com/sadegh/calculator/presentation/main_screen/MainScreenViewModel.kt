@@ -15,9 +15,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
+import javax.inject.Inject
 
 @HiltViewModel
-class MainScreenViewModel : ViewModel() {
+class MainScreenViewModel @Inject constructor(): ViewModel() {
 
     private val _input = MutableStateFlow(mutableListOf("0"))
 

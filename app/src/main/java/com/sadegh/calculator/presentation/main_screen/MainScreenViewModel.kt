@@ -80,9 +80,35 @@ class MainScreenViewModel : ViewModel() {
             45.4.sp
         )
 
+
+    val resultFontSize = isLastInputEqual
+        .transform {
+
+            if (it && _result.value != ResultType.undefined) {
+                emit(45.sp)
+            } else {
+                emit(35.sp)
+            }
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            45.sp
+        )
+
+
     val inputTextColor = isLastInputEqual
         .transform {
             val color = if (it) Color.Gray else Color.White
+            emit(color)
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            Color.White
+        )
+
+    val resultTextColor = isLastInputEqual
+        .transform {
+            val color = if (it) Color.White else Color.Gray
             emit(color)
         }.stateIn(
             viewModelScope,

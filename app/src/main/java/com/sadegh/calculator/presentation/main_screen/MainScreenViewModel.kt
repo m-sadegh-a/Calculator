@@ -42,6 +42,54 @@ class MainScreenViewModel : ViewModel() {
             false
         )
 
+
+    val inputFontSize = isLastInputEqual
+        .transform {
+
+            val length = _input.value.size
+
+            val fontSizeMap = mapOf(
+                12 to 45.4.sp,
+                13 to 42.5.sp,
+                14 to 39.sp,
+                15 to 36.7.sp,
+                16 to 34.1.sp,
+                17 to 32.4.sp,
+                18 to 30.1.sp,
+                19 to 29.sp,
+                20 to 27.5.sp
+            )
+
+            if (it) {
+                emit(32.sp)
+            }
+            val fontSize = when (length) {
+
+                in 0..12 -> fontSizeMap[12]
+
+                in 13..19 -> fontSizeMap[length]
+
+                else -> fontSizeMap[20]
+            }
+
+            emit(fontSize)
+        }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            45.4.sp
+        )
+
+    val inputTextColor = isLastInputEqual
+        .transform {
+            val color = if (it) Color.Gray else Color.White
+            emit(color)
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            Color.White
+        )
+
     private fun isResultUndefined() = result.value == ResultType.undefined
 
     private fun isClean() = input.value == mutableListOf("0")

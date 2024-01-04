@@ -1,11 +1,17 @@
 package com.sadegh.calculator.presentation.main_screen
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.sadegh.calculator.homeScreen.Operator
 import com.sadegh.calculator.homeScreen.ResultType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transform
 
 @HiltViewModel
 class MainScreenViewModel : ViewModel() {
@@ -19,20 +25,35 @@ class MainScreenViewModel : ViewModel() {
     private val _startIndex = MutableStateFlow(1)
     val startIndex = _startIndex.asStateFlow()
 
-    private
-    val lastElement: String
-        get() = input.value.last()
+    private val lastElement = _input
+        .transform { emit(it.last()) }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            "0"
+        )
+
+
+    private val isLastInputEqual = lastElement
+        .transform { emit(it == "=") }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            false
+        )
 
     private fun isResultUndefined() = result.value == ResultType.undefined
+
     private fun isClean() = input.value == mutableListOf("0")
-    private fun isLastInputAnOperator() = lastElement in arrayOf("÷", "x", "-", "+")
-    private fun isLastInputEqual() = lastElement == "="
-    private fun isLastInputPercent() = lastElement == "%"
+
+    private fun isLastInputAnOperator() = lastElement.value in arrayOf("÷", "x", "-", "+")
+
+    private fun isLastInputPercent() = lastElement.value == ""
 
     fun onEvent(event: UserEvent) {
 
         when (event) {
-            UserEvent.OnButtonsExpansionButtonClick -> TODO()
+            UserEvent.OnButtonsExpansionButtonClick -> onButtonsExpansionButtonClick()
             UserEvent.OnClearButtonClick -> onClearButtonClick()
             UserEvent.OnDeleteButtonClick -> onDeleteButtonClick()
             UserEvent.OnEqualButtonClick -> onEqualButtonClick()
@@ -60,7 +81,7 @@ class MainScreenViewModel : ViewModel() {
 
     private fun onPercentButtonClick() {
 
-        if (isLastInputEqual()) {
+        if (isLastInputEqual.value) {
             _input.value = if (result.value != ResultType.undefined) {
                 mutableListOf(result.value, "%")
             } else {
@@ -69,9 +90,9 @@ class MainScreenViewModel : ViewModel() {
             return
         }
 
-        if (lastElement.last() == '.') {
+        if (lastElement.value.last() == '.') {
 
-            _input.value[input.value.lastIndex] = lastElement.dropLast(1)
+            _input.value[input.value.lastIndex] = lastElement.value.dropLast(1)
 
         }
 
@@ -84,13 +105,13 @@ class MainScreenViewModel : ViewModel() {
 
         when {
 
-            isLastInputEqual() -> return
+            isLastInputEqual.value -> return
 
             _input.value.singleOrNull()?.length == 1 -> _input.value = mutableListOf("0")
 
-            lastElement.length == 1 -> _input.value.removeAt(_input.value.lastIndex)
+            lastElement.value.length == 1 -> _input.value.removeAt(_input.value.lastIndex)
 
-            else -> _input.value[_input.value.lastIndex] = lastElement.dropLast(1)
+            else -> _input.value[_input.value.lastIndex] = lastElement.value.dropLast(1)
 
         }
         _result.value = calculateResult()
@@ -98,7 +119,7 @@ class MainScreenViewModel : ViewModel() {
 
     private fun onOperatorButtonClick(operatorSymbol: String) {
 
-        if (isLastInputEqual()) {
+        if (isLastInputEqual.value) {
             _input.value = if (_result.value != ResultType.undefined) {
                 mutableListOf(_result.value, operatorSymbol)
             } else {
@@ -107,9 +128,9 @@ class MainScreenViewModel : ViewModel() {
             return
         }
 
-        if (lastElement.last() == '.') {
+        if (lastElement.value.last() == '.') {
 
-            val lastElement = lastElement.dropLast(1)
+            val lastElement = lastElement.value.dropLast(1)
             _input.value = (_input.value.dropLast(1) + lastElement).toMutableList()
 
         }
@@ -127,9 +148,9 @@ class MainScreenViewModel : ViewModel() {
 
         when {
 
-            lastElement.length == 15 -> return
+            lastElement.value.length == 15 -> return
 
-            isLastInputEqual() || isClean() -> _input.value = mutableListOf(number.toString())
+            isLastInputEqual.value || isClean() -> _input.value = mutableListOf(number.toString())
 
             isLastInputAnOperator() || isLastInputPercent() -> {
 
@@ -148,9 +169,9 @@ class MainScreenViewModel : ViewModel() {
     private fun onPointButtonClick() {
 
         when {
-            lastElement.length == 15 || "." in lastElement -> return
+            lastElement.value.length == 15 || "." in lastElement.value -> return
 
-            isLastInputEqual() -> _input.value = mutableListOf("0.")
+            isLastInputEqual.value -> _input.value = mutableListOf("0.")
 
             isLastInputAnOperator() || isLastInputPercent() -> {
                 _input.value = (_input.value + "0.").toMutableList()
@@ -165,11 +186,11 @@ class MainScreenViewModel : ViewModel() {
 
     private fun onEqualButtonClick() {
 
-        if (isLastInputEqual()) {
+        if (isLastInputEqual.value) {
             return
         }
 
-        if (lastElement.last() == '.') {
+        if (lastElement.value.last() == '.') {
 
             _input.value = (_input.value.dropLast(1)).toMutableList()
 
@@ -197,7 +218,8 @@ class MainScreenViewModel : ViewModel() {
             arrayOf("-", "+")
         )
 
-        val newInput = input.value.dropLast(if (isLastInputAnOperator()) 1 else 0).toMutableList()
+        val newInput =
+            input.value.dropLast(if (isLastInputAnOperator()) 1 else 0).toMutableList()
 
         operatorsSymbol.forEach { operatorsWithSamePrecedence ->
 

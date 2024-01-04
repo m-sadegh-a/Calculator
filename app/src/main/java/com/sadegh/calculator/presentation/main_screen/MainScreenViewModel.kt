@@ -6,7 +6,6 @@ import com.sadegh.calculator.homeScreen.ResultType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 
 @HiltViewModel
 class MainScreenViewModel : ViewModel() {
@@ -16,6 +15,9 @@ class MainScreenViewModel : ViewModel() {
 
     private val _result = MutableStateFlow("")
     val result = _result.asStateFlow()
+
+    private val _startIndex = MutableStateFlow(1)
+    val startIndex = _startIndex.asStateFlow()
 
     private
     val lastElement: String
@@ -38,6 +40,15 @@ class MainScreenViewModel : ViewModel() {
             UserEvent.OnPointButtonClick -> onPointButtonClick()
             is UserEvent.OnNumberButtonClick -> onNumberButtonClick(event.number)
             is UserEvent.OnOperatorButtonClick -> onOperatorButtonClick(event.symbol)
+        }
+    }
+
+    private fun onButtonsExpansionButtonClick() {
+
+        _startIndex.value = if (_startIndex.value == 1) {
+            0
+        } else {
+            1
         }
     }
 

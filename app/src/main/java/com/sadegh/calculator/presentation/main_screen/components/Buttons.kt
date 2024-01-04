@@ -20,7 +20,7 @@ import com.sadegh.calculator.homeScreen.Screen
 fun Buttons(
     modifier: Modifier,
     screen: Screen,
-    buttons: Array<Array<Button>>,
+    buttons: List<List<Button>>,
     updateScreen: (Screen) -> Unit
 
 ) {
@@ -61,7 +61,7 @@ fun Buttons(
                         onClick = {
 
                             screen.onClickButtonChange(
-                                button.symbolAsString,
+                                button.symbolAsString!!,
                                 startIndex
                             ) {
                                 startIndex = it
@@ -86,7 +86,7 @@ fun Buttons(
                             )
                         } else {
                             Text(
-                                text = button.symbolAsString,
+                                text = button.symbolAsString!!,
                                 fontSize = 30.sp,
                                 color = button.contentColor,
                             )

@@ -37,7 +37,7 @@ class MainScreenViewModel : ViewModel() {
             UserEvent.OnPercentButtonClick -> onPercentButtonClick()
             UserEvent.OnPointButtonClick -> TODO()
             is UserEvent.OnNumberButtonClick -> TODO()
-            is UserEvent.OnOperatorButtonClick -> TODO()
+            is UserEvent.OnOperatorButtonClick -> onOperatorButtonClick(event.symbol)
         }
     }
 
@@ -69,7 +69,7 @@ class MainScreenViewModel : ViewModel() {
         _result.value = calculateResult()
     }
 
-    private fun onDeleteButtonClick(){
+    private fun onDeleteButtonClick() {
 
         when {
 
@@ -83,6 +83,33 @@ class MainScreenViewModel : ViewModel() {
 
         }
         _result.value = calculateResult()
+    }
+
+    private fun onOperatorButtonClick(operatorSymbol: String) {
+
+        if (isLastInputEqual()) {
+            _input.value = if (_result.value != ResultType.undefined) {
+                mutableListOf(_result.value, operatorSymbol)
+            } else {
+                mutableListOf("0", operatorSymbol)
+            }
+            return
+        }
+
+        if (lastElement.last() == '.') {
+
+            val lastElement = lastElement.dropLast(1)
+            _input.value = (_input.value.dropLast(1) + lastElement).toMutableList()
+
+        }
+
+        if (isLastInputAnOperator()) {
+
+            _input.value = (_input.value.dropLast(1) + operatorSymbol).toMutableList()
+        } else {
+
+            _input.value =(_input.value+operatorSymbol).toMutableList()
+        }
     }
 
     private fun calculateResult(): String {

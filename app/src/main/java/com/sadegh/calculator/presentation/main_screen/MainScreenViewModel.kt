@@ -6,18 +6,34 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sadegh.calculator.homeScreen.Operator
 import com.sadegh.calculator.homeScreen.ResultType
+import com.sadegh.calculator.homeScreen.formatInput
+import com.sadegh.calculator.homeScreen.separateAllThreeDigitsOfNumberWithComma
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 
 @HiltViewModel
 class MainScreenViewModel : ViewModel() {
 
-    private val _input = MutableStateFlow(mutableListOf<String>())
-    val input = _input.asStateFlow()
+    private val _input = MutableStateFlow(mutableListOf("0"))
+
+    val input = _input.transform {
+
+        val formattedInput = it.separateAllThreeDigitsOfNumberWithComma().joinToString("")
+            .dropLast(if (isLastInputEqual.value) 1 else 0).formatInput()
+        emit(formattedInput)
+    }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            "0"
+        )
 
     private val _result = MutableStateFlow("")
     val result = _result.asStateFlow()
@@ -118,7 +134,7 @@ class MainScreenViewModel : ViewModel() {
 
     private fun isResultUndefined() = result.value == ResultType.undefined
 
-    private fun isClean() = input.value == mutableListOf("0")
+    private fun isClean() = _input.value == mutableListOf("0")
 
     private fun isLastInputAnOperator() = lastElement.value in arrayOf("÷", "x", "-", "+")
 
@@ -283,7 +299,7 @@ class MainScreenViewModel : ViewModel() {
             return ""
         }
 
-        if (input.value.size == 1) {
+        if (_input.value.size == 1) {
             return (input.value.single().toDouble() * 1).toString()
         }
 
@@ -293,7 +309,7 @@ class MainScreenViewModel : ViewModel() {
         )
 
         val newInput =
-            input.value.dropLast(if (isLastInputAnOperator()) 1 else 0).toMutableList()
+            _input.value.dropLast(if (isLastInputAnOperator()) 1 else 0).toMutableList()
 
         operatorsSymbol.forEach { operatorsWithSamePrecedence ->
 

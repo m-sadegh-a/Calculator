@@ -15,20 +15,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sadegh.calculator.homeScreen.Button
 import com.sadegh.calculator.homeScreen.Screen
+import com.sadegh.calculator.presentation.main_screen.UserEvent
 
 @Composable
 fun Buttons(
     modifier: Modifier,
-    screen: Screen,
+    startIndex: Int,
     buttons: List<List<Button>>,
-    updateScreen: (Screen) -> Unit
-
+    onEvent: (UserEvent) -> Unit
 ) {
-
-    var startIndex by remember {
-
-        mutableStateOf(1)
-    }
 
     Column(
         modifier = modifier
@@ -60,18 +55,7 @@ fun Buttons(
                             .background(button.color),
                         onClick = {
 
-                            screen.onClickButtonChange(
-                                button.symbolAsString!!,
-                                startIndex
-                            ) {
-                                startIndex = it
-                            }
-                            updateScreen(
-                                Screen(
-                                    result = screen.result,
-                                    input = screen.input
-                                )
-                            )
+                            button.event?.let(onEvent)
 
                         },
 

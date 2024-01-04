@@ -1,5 +1,6 @@
 package com.sadegh.calculator.presentation.main_screen
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
@@ -265,7 +266,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
             }
 
             else -> {
-                val newLastElement = "$lastElement$number"
+                val newLastElement = "${lastElement.value}$number"
                 _input.value = _input.value.dropLast(1) + newLastElement
             }
         }

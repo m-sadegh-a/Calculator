@@ -32,7 +32,7 @@ class MainScreenViewModel : ViewModel() {
         when (event) {
             UserEvent.OnButtonsExpansionButtonClick -> TODO()
             UserEvent.OnClearButtonClick -> onClearButtonClick()
-            UserEvent.OnDeleteButtonClick -> TODO()
+            UserEvent.OnDeleteButtonClick -> onDeleteButtonClick()
             UserEvent.OnDivisionButtonClick -> TODO()
             UserEvent.OnEqualButtonClick -> TODO()
             UserEvent.OnMinusButtonClick -> TODO()
@@ -78,6 +78,22 @@ class MainScreenViewModel : ViewModel() {
 
         _input.value = (_input.value + "%").toMutableList()
 
+        _result.value = calculateResult()
+    }
+
+    private fun onDeleteButtonClick(){
+
+        when {
+
+            isLastInputEqual() -> return
+
+            _input.value.singleOrNull()?.length == 1 -> _input.value = mutableListOf("0")
+
+            lastElement.length == 1 -> _input.value.removeAt(_input.value.lastIndex)
+
+            else -> _input.value[_input.value.lastIndex] = lastElement.dropLast(1)
+
+        }
         _result.value = calculateResult()
     }
 

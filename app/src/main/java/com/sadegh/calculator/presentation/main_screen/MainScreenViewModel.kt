@@ -18,9 +18,9 @@ import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 @HiltViewModel
-class MainScreenViewModel @Inject constructor(): ViewModel() {
+class MainScreenViewModel @Inject constructor() : ViewModel() {
 
-    private val _input = MutableStateFlow(mutableListOf("0"))
+    private val _input = MutableStateFlow(listOf("0"))
 
     val input = _input.transform {
 
@@ -121,7 +121,7 @@ class MainScreenViewModel @Inject constructor(): ViewModel() {
         }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            45.sp
+            35.sp
         )
 
 
@@ -147,7 +147,7 @@ class MainScreenViewModel @Inject constructor(): ViewModel() {
 
     private fun isResultUndefined() = result.value == ResultType.undefined
 
-    private fun isClean() = _input.value == mutableListOf("0")
+    private fun isClean() = _input.value == listOf("0")
 
     private fun isLastInputAnOperator() = lastElement.value in arrayOf("÷", "x", "-", "+")
 
@@ -178,7 +178,7 @@ class MainScreenViewModel @Inject constructor(): ViewModel() {
 
     private fun onClearButtonClick() {
 
-        _input.value = mutableListOf("0")
+        _input.value = listOf("0")
         _result.value = ""
     }
 
@@ -186,20 +186,21 @@ class MainScreenViewModel @Inject constructor(): ViewModel() {
 
         if (isLastInputEqual.value) {
             _input.value = if (result.value != ResultType.undefined) {
-                mutableListOf(result.value, "%")
+                listOf(result.value, "%")
             } else {
-                mutableListOf("0", "%")
+                listOf("0", "%")
             }
             return
         }
 
         if (lastElement.value.last() == '.') {
 
-            _input.value[input.value.lastIndex] = lastElement.value.dropLast(1)
+            val newLastInput = lastElement.value.dropLast(1)
+            _input.value = _input.value.dropLast(1) + newLastInput
 
         }
 
-        _input.value = (_input.value + "%").toMutableList()
+        _input.value = _input.value + "%"
 
         _result.value = calculateResult()
     }
@@ -210,11 +211,14 @@ class MainScreenViewModel @Inject constructor(): ViewModel() {
 
             isLastInputEqual.value -> return
 
-            _input.value.singleOrNull()?.length == 1 -> _input.value = mutableListOf("0")
+            _input.value.singleOrNull()?.length == 1 -> _input.value = listOf("0")
 
-            lastElement.value.length == 1 -> _input.value.removeAt(_input.value.lastIndex)
+            lastElement.value.length == 1 -> _input.value = _input.value.dropLast(1)
 
-            else -> _input.value[_input.value.lastIndex] = lastElement.value.dropLast(1)
+            else -> {
+                val newLastInput = lastElement.value.dropLast(1)
+                _input.value = _input.value.dropLast(1) + newLastInput
+            }
 
         }
         _result.value = calculateResult()
@@ -224,9 +228,9 @@ class MainScreenViewModel @Inject constructor(): ViewModel() {
 
         if (isLastInputEqual.value) {
             _input.value = if (_result.value != ResultType.undefined) {
-                mutableListOf(_result.value, operatorSymbol)
+                listOf(_result.value, operatorSymbol)
             } else {
-                mutableListOf("0", operatorSymbol)
+                listOf("0", operatorSymbol)
             }
             return
         }
@@ -234,16 +238,16 @@ class MainScreenViewModel @Inject constructor(): ViewModel() {
         if (lastElement.value.last() == '.') {
 
             val lastElement = lastElement.value.dropLast(1)
-            _input.value = (_input.value.dropLast(1) + lastElement).toMutableList()
+            _input.value = _input.value.dropLast(1) + lastElement
 
         }
 
         if (isLastInputAnOperator()) {
 
-            _input.value = (_input.value.dropLast(1) + operatorSymbol).toMutableList()
+            _input.value = _input.value.dropLast(1) + operatorSymbol
         } else {
 
-            _input.value = (_input.value + operatorSymbol).toMutableList()
+            _input.value = _input.value + operatorSymbol
         }
     }
 
@@ -253,16 +257,16 @@ class MainScreenViewModel @Inject constructor(): ViewModel() {
 
             lastElement.value.length == 15 -> return
 
-            isLastInputEqual.value || isClean() -> _input.value = mutableListOf(number.toString())
+            isLastInputEqual.value || isClean() -> _input.value = listOf(number.toString())
 
             isLastInputAnOperator() || isLastInputPercent() -> {
 
-                _input.value = (_input.value + number.toString()).toMutableList()
+                _input.value = _input.value + number.toString()
             }
 
             else -> {
                 val newLastElement = "$lastElement$number"
-                _input.value = (_input.value.dropLast(1) + newLastElement).toMutableList()
+                _input.value = _input.value.dropLast(1) + newLastElement
             }
         }
 
@@ -274,15 +278,15 @@ class MainScreenViewModel @Inject constructor(): ViewModel() {
         when {
             lastElement.value.length == 15 || "." in lastElement.value -> return
 
-            isLastInputEqual.value -> _input.value = mutableListOf("0.")
+            isLastInputEqual.value -> _input.value = listOf("0.")
 
             isLastInputAnOperator() || isLastInputPercent() -> {
-                _input.value = (_input.value + "0.").toMutableList()
+                _input.value = _input.value + "0."
             }
 
             else -> {
                 val newLastElement = "$lastElement."
-                _input.value = (_input.value + newLastElement).toMutableList()
+                _input.value = _input.value + newLastElement
             }
         }
     }
@@ -295,10 +299,10 @@ class MainScreenViewModel @Inject constructor(): ViewModel() {
 
         if (lastElement.value.last() == '.') {
 
-            _input.value = (_input.value.dropLast(1)).toMutableList()
+            _input.value = _input.value.dropLast(1)
 
         }
-        _input.value = (_input.value + "=").toMutableList()
+        _input.value = _input.value + "="
 
     }
 
@@ -313,7 +317,7 @@ class MainScreenViewModel @Inject constructor(): ViewModel() {
         }
 
         if (_input.value.size == 1) {
-            return (input.value.single().toDouble() * 1).toString()
+            return (_input.value.single().toDouble() * 1).toString()
         }
 
         val operatorsSymbol = arrayOf(

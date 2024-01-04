@@ -33,9 +33,9 @@ class MainScreenViewModel : ViewModel() {
             UserEvent.OnButtonsExpansionButtonClick -> TODO()
             UserEvent.OnClearButtonClick -> onClearButtonClick()
             UserEvent.OnDeleteButtonClick -> onDeleteButtonClick()
-            UserEvent.OnEqualButtonClick -> TODO()
+            UserEvent.OnEqualButtonClick -> onEqualButtonClick()
             UserEvent.OnPercentButtonClick -> onPercentButtonClick()
-            UserEvent.OnPointButtonClick ->onPointButtonClick()
+            UserEvent.OnPointButtonClick -> onPointButtonClick()
             is UserEvent.OnNumberButtonClick -> onNumberButtonClick(event.number)
             is UserEvent.OnOperatorButtonClick -> onOperatorButtonClick(event.symbol)
         }
@@ -150,6 +150,21 @@ class MainScreenViewModel : ViewModel() {
                 _input.value = (_input.value + newLastElement).toMutableList()
             }
         }
+    }
+
+    private fun onEqualButtonClick() {
+
+        if (isLastInputEqual()) {
+            return
+        }
+
+        if (lastElement.last() == '.') {
+
+            _input.value = (_input.value.dropLast(1)).toMutableList()
+
+        }
+        _input.value = (_input.value + "=").toMutableList()
+
     }
 
     private fun calculateResult(): String {

@@ -8,21 +8,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.calculator.R
-import com.sadegh.calculator.homeScreen.Button
-import com.sadegh.calculator.homeScreen.Screen
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sadegh.calculator.presentation.main_screen.components.Buttons
 import com.sadegh.calculator.presentation.main_screen.components.ResultBox
-import com.sadegh.calculator.ui.theme.operatorColor
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun HomeScreen() {
 
-    var screenState by remember {
-        mutableStateOf(Screen(mutableListOf("0")))
-    }
+    val viewModel = viewModel<MainScreenViewModel>()
 
+    val input by viewModel.input.collectAsState()
+    val inputTextColor by viewModel.inputTextColor.collectAsState()
+    val inputFontSize by viewModel.inputFontSize.collectAsState()
+
+    val result by viewModel.result.collectAsState()
+    val resultTextColor by viewModel.resultTextColor.collectAsState()
+    val resultFontSize by viewModel.resultFontSize.collectAsState()
 
     Column(
         modifier = Modifier
@@ -37,23 +39,24 @@ fun HomeScreen() {
                 .padding(20.dp)
                 .fillMaxWidth()
                 .fillMaxHeight(0.40f),
-            topText = screenState.formattedInput,
-            topTextFontSize = screenState.inputFontSize!!,
-            topTextColor = screenState.inputTextColor,
-            bottomText = screenState.formattedResult,
-            bottomTextFontSize = screenState.resultFontSize,
-            bottomTextColor = screenState.resultTextColor
+            topText = input,
+            topTextFontSize = inputFontSize!!,
+            topTextColor = inputTextColor,
+            bottomText = result,
+            bottomTextFontSize = resultFontSize,
+            bottomTextColor = resultTextColor
         )
 
         val buttons = buttons
 
+        val startIndex by viewModel.startIndex.collectAsState()
+
         Buttons(
             modifier = Modifier.fillMaxSize(),
-            screen = screenState,
             buttons = buttons,
-        ) {
-            screenState = it
-        }
+            startIndex = startIndex,
+            onEvent = viewModel::onEvent
+        )
     }
 }
 

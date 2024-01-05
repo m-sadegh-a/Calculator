@@ -268,7 +268,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
             else -> {
                 val newLastElement = "$lastElement."
-                input.value = input.value + newLastElement
+                input.value = input.value.dropLast(1) + newLastElement
             }
         }
     }

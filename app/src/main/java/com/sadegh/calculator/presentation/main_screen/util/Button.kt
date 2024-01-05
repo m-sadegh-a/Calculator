@@ -1,4 +1,4 @@
-package com.sadegh.calculator.homeScreen
+package com.sadegh.calculator.presentation.main_screen.util
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp

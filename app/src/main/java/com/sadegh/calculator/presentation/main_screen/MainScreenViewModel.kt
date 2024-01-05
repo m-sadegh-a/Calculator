@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sadegh.calculator.homeScreen.Operator
+import com.sadegh.calculator.presentation.main_screen.util.Operator
 import com.sadegh.calculator.presentation.main_screen.util.ResultType
 import com.sadegh.calculator.presentation.main_screen.util.formatInput
 import com.sadegh.calculator.presentation.main_screen.util.formatResult

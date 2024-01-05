@@ -1,5 +1,6 @@
-package com.sadegh.calculator.homeScreen
+package com.sadegh.calculator.presentation.main_screen.util
 
+import com.sadegh.calculator.homeScreen.ResultType
 import kotlin.math.min
 
 fun List<String>.separateAllThreeDigitsOfNumberWithComma(): List<String> {

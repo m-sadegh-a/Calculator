@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sadegh.calculator.homeScreen.Operator
 import com.sadegh.calculator.homeScreen.ResultType
-import com.sadegh.calculator.homeScreen.formatInput
-import com.sadegh.calculator.homeScreen.formatResult
-import com.sadegh.calculator.homeScreen.separateAllThreeDigitsOfNumberWithComma
+import com.sadegh.calculator.presentation.main_screen.util.formatInput
+import com.sadegh.calculator.presentation.main_screen.util.formatResult
+import com.sadegh.calculator.presentation.main_screen.util.separateAllThreeDigitsOfNumberWithComma
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

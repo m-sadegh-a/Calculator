@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name="com.sadegh.calculator.CalculatorApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -13,7 +14,7 @@
         android:theme="@style/Theme.Calculator"
         tools:targetApi="33">
         <activity
-            android:name="com.sadegh.calculator.MainActivity"
+            android:name="com.sadegh.calculator.presentation.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Calculator">
             <intent-filter>

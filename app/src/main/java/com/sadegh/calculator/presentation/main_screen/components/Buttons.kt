@@ -1,4 +1,4 @@
-package com.sadegh.calculator.homeScreen
+package com.sadegh.calculator.presentation.main_screen.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,20 +13,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sadegh.calculator.presentation.main_screen.util.Button
+import com.sadegh.calculator.presentation.main_screen.UserEvent
 
 @Composable
 fun Buttons(
     modifier: Modifier,
-    screen: Screen,
-    buttons: Array<Array<Button>>,
-    updateScreen: (Screen) -> Unit
-
+    startIndex: Int,
+    buttons: List<List<Button>>,
+    onEvent: (UserEvent) -> Unit
 ) {
-
-    var startIndex by remember {
-
-        mutableStateOf(1)
-    }
 
     Column(
         modifier = modifier
@@ -58,18 +54,7 @@ fun Buttons(
                             .background(button.color),
                         onClick = {
 
-                            screen.onClickButtonChange(
-                                button.symbolAsString,
-                                startIndex
-                            ) {
-                                startIndex = it
-                            }
-                            updateScreen(
-                                Screen(
-                                    result = screen.result,
-                                    input = screen.input
-                                )
-                            )
+                            button.event?.let(onEvent)
 
                         },
 
@@ -84,7 +69,7 @@ fun Buttons(
                             )
                         } else {
                             Text(
-                                text = button.symbolAsString,
+                                text = button.symbolAsString!!,
                                 fontSize = 30.sp,
                                 color = button.contentColor,
                             )

@@ -1,4 +1,4 @@
-package com.sadegh.calculator.homeScreen
+package com.sadegh.calculator.presentation.main_screen.util
 
 class Operator(private val symbol: String) {
 

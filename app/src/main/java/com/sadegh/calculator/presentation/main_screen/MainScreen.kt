@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sadegh.calculator.presentation.main_screen.components.Buttons
 import com.sadegh.calculator.presentation.main_screen.components.ResultBox
+import com.sadegh.calculator.presentation.main_screen.util.buttons
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable

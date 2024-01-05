@@ -1,4 +1,4 @@
-package com.sadegh.calculator.presentation.main_screen
+package com.sadegh.calculator.presentation.main_screen.util
 
 import com.example.calculator.R
 import com.sadegh.calculator.homeScreen.Button
@@ -47,3 +47,9 @@ val buttons = listOf(
         Button.Equal
     ),
 )
+
+object ResultType {
+
+    const val undefined = "can not divide by zero"
+
+}

@@ -51,10 +51,10 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
     private val _startIndex = MutableStateFlow(1)
     val startIndex = _startIndex.asStateFlow()
 
-    val inputFontSize = input
+    val inputFontSize = formattedInput
         .transform {
 
-            val length = it.size
+            val length = it.length
 
             val fontSizeMap = mapOf(
                 12 to 45.4.sp,
@@ -68,7 +68,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
                 20 to 27.5.sp
             )
 
-            if (it.last() == "=") {
+            if (it.last() == '=') {
                 emit(32.sp)
                 return@transform
             }

@@ -19,11 +19,11 @@ fun HomeScreen() {
 
     val viewModel = viewModel<MainScreenViewModel>()
 
-    val input by viewModel.input.collectAsState()
+    val input by viewModel.formattedInput.collectAsState()
     val inputTextColor by viewModel.inputTextColor.collectAsState()
     val inputFontSize by viewModel.inputFontSize.collectAsState()
 
-    val result by viewModel.result.collectAsState()
+    val result by viewModel.formattedResult.collectAsState()
     val resultTextColor by viewModel.resultTextColor.collectAsState()
     val resultFontSize by viewModel.resultFontSize.collectAsState()
 

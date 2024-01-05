@@ -49,6 +49,6 @@ val buttons = listOf(
 
 object ResultType {
 
-    const val undefined = "can not divide by zero"
+    const val UNDEFINED = "can not divide by zero"
 
 }

@@ -1,5 +1,6 @@
 package com.sadegh.calculator.presentation.main_screen
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
@@ -8,7 +9,6 @@ import com.sadegh.calculator.presentation.main_screen.util.Operator
 import com.sadegh.calculator.presentation.main_screen.util.ResultType
 import com.sadegh.calculator.presentation.main_screen.util.formatInput
 import com.sadegh.calculator.presentation.main_screen.util.formatResult
-import com.sadegh.calculator.presentation.main_screen.util.separateAllThreeDigitsOfNumberWithComma
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,11 +24,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
     val formattedInput = input.transform {
 
-        val formattedInput = it
-            .separateAllThreeDigitsOfNumberWithComma()
-            .joinToString("")
-            .dropLast(if (it.last() == "=") 1 else 0)
-            .formatInput()
+        val formattedInput = formatInput(it)
 
         emit(formattedInput)
     }
@@ -41,10 +37,8 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
     private val result = MutableStateFlow("")
     val formattedResult = result
         .transform {
-            val formattedResult = mutableListOf(it)
-                .separateAllThreeDigitsOfNumberWithComma()
-                .single()
-                .formatResult()
+
+            val formattedResult = formatResult(it)
 
             emit(formattedResult)
         }
@@ -86,7 +80,6 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
                 else -> fontSizeMap[20]
             }
-
             emit(fontSize)
         }
         .stateIn(

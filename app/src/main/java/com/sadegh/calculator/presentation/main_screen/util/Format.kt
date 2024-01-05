@@ -1,67 +1,41 @@
 package com.sadegh.calculator.presentation.main_screen.util
 
-import kotlin.math.min
+import java.text.DecimalFormat
 
-fun List<String>.separateAllThreeDigitsOfNumberWithComma(): List<String> {
+fun formatInput(input: List<String>): String {
 
-    if (this.singleOrNull() == ResultType.UNDEFINED) {
-        return this
-    }
+    val inputAsStringAfterFirstFormat = separateAllThreeDigitsOfAllNumbersWithComma(input)
+        .joinToString("")
+        .dropLast(if (input.last() == "=") 1 else 0)
 
-    return this.map { numberOrOperator ->
-
-        if (numberOrOperator in arrayOf("÷", "x", "-", "+", '=','%')) {
-            return@map numberOrOperator
-        }
-
-        val pointIndex = numberOrOperator.indexOf(".")
-        val integerPartLength = if (pointIndex != -1) pointIndex else numberOrOperator.length
-        val integerPart = numberOrOperator.take(integerPartLength)
-        val decimalPart = numberOrOperator.drop(integerPartLength)
-
-        buildString {
-
-            for ((digitIndex, digit) in integerPart.withIndex()) {
-
-                if (digit == '-') {
-                    append('-')
-                    continue
-                }
-                append(digit)
-
-                val integerPartOfNumberLastIndex = integerPart.lastIndex
-                if ((integerPartOfNumberLastIndex - digitIndex) % 3 == 0 &&
-                    digitIndex != integerPartOfNumberLastIndex
-                ) {
-                    append(',')
-                }
-            }
-            append(decimalPart)
-        }
-    }
+    return formatStringInput(inputAsStringAfterFirstFormat, 20)
 }
 
 /**
- *This function only allows 20 characters per line.
- *of course, 19 characters must be placed in the first line
- *if all the digits of a number do not fit in one line,
- *it moves that number along with the operator before it to the next line.
+ * This function allows only the @param maximumCharacterCountPerLine value
+ * characters in each line.
+ * Of course, there can be a maximum of maximumCharacterCountPerLine-1 character in the first line
+ * if all the digits of a number do not fit in one line,
+ * it moves that number along with the operator before it to the next line.
  */
 
-fun String.formatInput(): String {
+fun formatStringInput(
+    stringInput: String,
+    maximumCharacterCountPerLine: Int
+): String {
 
     var lastBackSlashIndex = -1
     var lastOperatorIndex = -1
-    var inputAsString = this
+    var inputAsString = stringInput
     var index = 0
     while (index < inputAsString.length) {
 
-        if (inputAsString[index] in arrayOf('÷', 'x', '-', '+', '=','%')) {
+        if (inputAsString[index] in arrayOf('÷', 'x', '-', '+', '=', '%')) {
             lastOperatorIndex = index
         }
 
-        val maximumCharacterCountPerLine = index - lastBackSlashIndex
-        if (maximumCharacterCountPerLine == 20) {
+        val characterCountPerLine = index - lastBackSlashIndex
+        if (characterCountPerLine == maximumCharacterCountPerLine) {
 
             when (inputAsString.getOrNull(index + 1)) {
 
@@ -71,14 +45,14 @@ fun String.formatInput(): String {
                 */
                 in '0'..'9', ',', '.' -> {
 
-                    inputAsString = inputAsString.addNewLineToString(lastOperatorIndex)
+                    inputAsString = addNewLineBetweenString(inputAsString, lastOperatorIndex)
                     lastBackSlashIndex = lastOperatorIndex
 
                 }
 
-                in arrayOf('÷', 'x', '-', '+', '=','%') -> {
+                in arrayOf('÷', 'x', '-', '+', '=', '%') -> {
 
-                    inputAsString = inputAsString.addNewLineToString(index + 1)
+                    inputAsString = addNewLineBetweenString(inputAsString, index + 1)
                     lastBackSlashIndex = index + 1
 
                 }
@@ -92,23 +66,82 @@ fun String.formatInput(): String {
     return inputAsString
 }
 
-fun String.formatResult(): String {
+fun addNewLineBetweenString(input: String, newLineIndex: Int) = buildString {
 
-    if ("E" !in this) {
-        return this
-    }
-
-    val pointIndex = this.indexOf(".")
-    val indexOfE = this.indexOf("E")
-    val powerOfTen = this.replaceBefore("E", "")
-    val countOfDigitsAfterPoint = min(indexOfE - pointIndex - 1, 8)
-    val number = this.take(pointIndex + countOfDigitsAfterPoint + 1)
-    return number + powerOfTen
+    append(input.take(newLineIndex))
+    append("\n")
+    append(input.drop(newLineIndex))
 }
 
-fun String.addNewLineToString(newLineIndex: Int) = buildString {
+fun formatResult(result: String): String {
 
-    append(this@addNewLineToString.take(newLineIndex))
-    append("\n")
-    append(this@addNewLineToString.drop(newLineIndex))
+    if (result == ResultType.UNDEFINED) {
+        return result
+    }
+
+    val resultAfterFirstFormat = separateAllThreeDigitsOfNumberWithComma(result)
+
+    return format(resultAfterFirstFormat, 8)
+
+}
+
+/**
+ * This function does not allow more digits
+ * than @param maximumCountOfDigitsAfterPoint between point and E
+ * Example : change 9.999999999E9 to 9.9999999E9 with maximumCountOfDigitsAfterPoint=7
+ */
+fun format(number: String, maximumCountOfDigitsAfterPoint: Int): String {
+
+    if ("E" !in number) {
+        return number
+    }
+
+    val pointIndex = number.indexOf(".")
+    val indexOfE = number.indexOf("E")
+    val eAndPowerOfTen = number.replaceBefore("E", "")//example : E8
+    val countOfDigitsAfterPoint = indexOfE - pointIndex - 1
+    if (countOfDigitsAfterPoint <= maximumCountOfDigitsAfterPoint) {
+        return number
+    }
+
+    return number.take(pointIndex + maximumCountOfDigitsAfterPoint + 1) + eAndPowerOfTen
+}
+
+/**
+ * This function separates all three digits from all the numbers in the input with comma
+ */
+fun separateAllThreeDigitsOfAllNumbersWithComma(input: List<String>): List<String> {
+
+    return input.map { numberOrOperator ->
+
+        if (numberOrOperator in arrayOf("÷", "x", "-", "+", '=', '%')) {
+            return@map numberOrOperator
+        }
+
+        return@map separateAllThreeDigitsOfNumberWithComma(numberOrOperator)
+
+    }
+}
+
+/**
+ * This function separates all three digits of the number with comma
+ */
+
+fun separateAllThreeDigitsOfNumberWithComma(number: String): String {
+
+    val pointIndex = number.indexOf('.')
+    val (beforePoint, afterPoint) = if (pointIndex == -1) {
+        number to ""
+    } else {
+        val beforePoint = number.takeWhile { it != '.' }
+        val afterPoint = number.takeLastWhile { it != '.' }
+        beforePoint to ".$afterPoint"
+    }
+
+    return try {
+        val decimalFormat = DecimalFormat("#,###")
+        decimalFormat.format(beforePoint.toLong()) + afterPoint
+    } catch (e: Exception) {
+        number
+    }
 }

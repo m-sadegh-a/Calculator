@@ -14,7 +14,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sadegh.calculator.homeScreen.Button
-import com.sadegh.calculator.homeScreen.Screen
 import com.sadegh.calculator.presentation.main_screen.UserEvent
 
 @Composable

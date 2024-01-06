@@ -16,7 +16,7 @@ sealed class Button(
     val event: UserEvent?
 ) {
 
-    object Clear :
+    object ClearButton :
         Button(
             symbolAsString = "C",
             contentColor = Color.Black,
@@ -24,7 +24,7 @@ sealed class Button(
             event = UserEvent.OnClearButtonClick
         )
 
-    object Delete :
+    object DeleteButton :
         Button(
             symbolAsIconId = R.drawable.ic_backspace,
             contentColor = Color.Black,
@@ -32,21 +32,50 @@ sealed class Button(
             event = UserEvent.OnDeleteButtonClick
         )
 
-    class Operator(
-        symbol: String,
-        iconId: Int,
+    sealed class OperatorButton(
+        symbolAsString: String,
+        symbolAsIconId: Int,
+        iconSize: Dp = 30.dp,
         contentColor: Color = Color.White,
-        color: Color = operatorColor
-    ) :
-        Button(
-            symbolAsString = symbol,
-            contentColor = contentColor,
-            color = color,
-            symbolAsIconId = iconId,
-            event = UserEvent.OnOperatorButtonClick(symbol = symbol)
+        color: Color = Color.DarkGray,
+    ) : Button(
+        symbolAsString = symbolAsString,
+        contentColor = contentColor,
+        color = color,
+        symbolAsIconId = symbolAsIconId,
+        iconSize = iconSize,
+        event = UserEvent.OnOperatorButtonClick(symbol = symbolAsString)
+    ) {
+
+        object SubtractionButton : OperatorButton(
+            symbolAsString = "-",
+            symbolAsIconId = R.drawable.ic_minus,
         )
 
-    object Equal :
+        object AddButton : OperatorButton(
+            symbolAsString = "+",
+            symbolAsIconId = R.drawable.ic_add,
+        )
+
+        object MultiplyButton : OperatorButton(
+            symbolAsString = "x",
+            symbolAsIconId = R.drawable.ic_multiply,
+        )
+
+        object DivisionButton : OperatorButton(
+            symbolAsString = "÷",
+            symbolAsIconId = R.drawable.ic_multiply,
+        )
+
+        object PercentageButton : OperatorButton(
+            symbolAsString = "%",
+            contentColor = Color.Black,
+            color = Color.Gray,
+            symbolAsIconId = R.drawable.ic_percent,
+        )
+   }
+
+    object EqualButton :
         Button(
             symbolAsString = "=",
             contentColor = Color.White,
@@ -55,17 +84,18 @@ sealed class Button(
             event = UserEvent.OnEqualButtonClick
         )
 
-    class Number(number: Int) :
+    class DigitButton(number: Int) :
         Button(
             symbolAsString = number.toString(),
             event = UserEvent.OnNumberButtonClick(number)
         )
 
-    object Point : Button(symbolAsString = ".", event = UserEvent.OnPointButtonClick)
-    object Expansion : Button(
+    object PointButton : Button(symbolAsString = ".", event = UserEvent.OnPointButtonClick)
+
+    object ExpansionButton : Button(
         symbolAsIconId = R.drawable.ic_show_more_operator,
         event = UserEvent.OnButtonsExpansionButtonClick
     )
 
-    object Undefined : Button(symbolAsString = "", event = null)
+    object UndefinedButton : Button(symbolAsString = "", event = null)
 }

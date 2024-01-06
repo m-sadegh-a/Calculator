@@ -1,55 +1,47 @@
 package com.sadegh.calculator.presentation.main_screen.util
 
-import androidx.compose.ui.graphics.Color
-import com.example.calculator.R
-
 val buttons = listOf(
     listOf(
-        Button.Undefined,
-        Button.Undefined,
-        Button.Undefined,
-        Button.Undefined,
-        Button.Undefined,
+        Button.UndefinedButton,
+        Button.UndefinedButton,
+        Button.UndefinedButton,
+        Button.UndefinedButton,
+        Button.UndefinedButton,
     ),
     listOf(
-        Button.Undefined,
-        Button.Clear,
-        Button.Operator(
-            symbol = "%",
-            iconId = R.drawable.ic_percent,
-            contentColor = Color.Black,
-            color = Color.Gray
-        ),
-        Button.Delete,
-        Button.Operator("÷", R.drawable.ic_divide)
+        Button.UndefinedButton,
+        Button.ClearButton,
+        Button.OperatorButton.PercentageButton,
+        Button.DeleteButton,
+        Button.OperatorButton.DivisionButton
     ),
     listOf(
-        Button.Undefined,
-        Button.Number(7),
-        Button.Number(8),
-        Button.Number(9),
-        Button.Operator("x", R.drawable.ic_multiply)
+        Button.UndefinedButton,
+        Button.DigitButton(7),
+        Button.DigitButton(8),
+        Button.DigitButton(9),
+        Button.OperatorButton.MultiplyButton
     ),
     listOf(
-        Button.Undefined,
-        Button.Number(4),
-        Button.Number(5),
-        Button.Number(6),
-        Button.Operator("-", R.drawable.ic_minus)
+        Button.UndefinedButton,
+        Button.DigitButton(4),
+        Button.DigitButton(5),
+        Button.DigitButton(6),
+        Button.OperatorButton.SubtractionButton
     ),
     listOf(
-        Button.Undefined,
-        Button.Number(1),
-        Button.Number(2),
-        Button.Number(3),
-        Button.Operator("+", R.drawable.ic_add)
+        Button.UndefinedButton,
+        Button.DigitButton(1),
+        Button.DigitButton(2),
+        Button.DigitButton(3),
+        Button.OperatorButton.AddButton
     ),
     listOf(
-        Button.Undefined,
-        Button.Expansion,
-        Button.Number(0),
-        Button.Point,
-        Button.Equal
+        Button.UndefinedButton,
+        Button.ExpansionButton,
+        Button.DigitButton(0),
+        Button.PointButton,
+        Button.EqualButton
     ),
 )
 

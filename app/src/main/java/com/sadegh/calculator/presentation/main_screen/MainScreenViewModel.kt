@@ -141,7 +141,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
             UserEvent.OnDeleteButtonClick -> onDeleteButtonClick()
             UserEvent.OnEqualButtonClick -> onEqualButtonClick()
             UserEvent.OnPointButtonClick -> onPointButtonClick()
-            is UserEvent.OnNumberButtonClick -> onNumberButtonClick(event.number)
+            is UserEvent.OnDigitButtonClick -> onNumberButtonClick(event.number)
             is UserEvent.OnOperatorButtonClick -> onOperatorButtonClick(event.symbol)
         }
     }

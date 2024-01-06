@@ -87,21 +87,60 @@ sealed class Button(
         event = UserEvent.OnEqualButtonClick
     )
 
-    sealed class DigitButton(number: Int) : Button(
+    sealed class DigitButton(number: Int, event: UserEvent) : Button(
         symbolAsString = number.toString(),
-        event = UserEvent.OnNumberButtonClick(number)
+        event = event
     ) {
 
-        object Digit0Button : DigitButton(0)
-        object Digit1Button : DigitButton(1)
-        object Digit2Button : DigitButton(2)
-        object Digit3Button : DigitButton(3)
-        object Digit4Button : DigitButton(4)
-        object Digit5Button : DigitButton(5)
-        object Digit6Button : DigitButton(6)
-        object Digit7Button : DigitButton(7)
-        object Digit8Button : DigitButton(8)
-        object Digit9Button : DigitButton(9)
+        object Digit0Button : DigitButton(
+            number = 0,
+            event = UserEvent.OnDigitButtonClick.OnDigit0ButtonClick
+        )
+
+        object Digit1Button : DigitButton(
+            number = 1,
+            event = UserEvent.OnDigitButtonClick.OnDigit1ButtonClick
+        )
+
+        object Digit2Button : DigitButton(
+            number = 2,
+            event = UserEvent.OnDigitButtonClick.OnDigit2ButtonClick
+        )
+
+        object Digit3Button : DigitButton(
+            number = 3,
+            event = UserEvent.OnDigitButtonClick.OnDigit3ButtonClick
+        )
+
+        object Digit4Button : DigitButton(
+            number = 4,
+            event = UserEvent.OnDigitButtonClick.OnDigit4ButtonClick
+        )
+
+        object Digit5Button : DigitButton(
+            number = 5,
+            event = UserEvent.OnDigitButtonClick.OnDigit5ButtonClick
+        )
+
+        object Digit6Button : DigitButton(
+            number = 6,
+            event = UserEvent.OnDigitButtonClick.OnDigit6ButtonClick
+        )
+
+        object Digit7Button : DigitButton(
+            number = 7,
+            event = UserEvent.OnDigitButtonClick.OnDigit7ButtonClick
+        )
+
+        object Digit8Button : DigitButton(
+            number = 8,
+            event = UserEvent.OnDigitButtonClick.OnDigit8ButtonClick
+        )
+
+        object Digit9Button : DigitButton(
+            number = 9,
+            event = UserEvent.OnDigitButtonClick.OnDigit9ButtonClick
+        )
     }
 
     object PointButton : Button(symbolAsString = ".", event = UserEvent.OnPointButtonClick)

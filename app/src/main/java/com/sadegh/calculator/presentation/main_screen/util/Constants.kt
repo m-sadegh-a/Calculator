@@ -1,5 +1,6 @@
 package com.sadegh.calculator.presentation.main_screen.util
 
+import androidx.compose.ui.graphics.Color
 import com.example.calculator.R
 
 val buttons = listOf(
@@ -13,7 +14,12 @@ val buttons = listOf(
     listOf(
         Button.Undefined,
         Button.Clear,
-        Button.Percent,
+        Button.Operator(
+            symbol = "%",
+            iconId = R.drawable.ic_percent,
+            contentColor = Color.Black,
+            color = Color.Gray
+        ),
         Button.Delete,
         Button.Operator("÷", R.drawable.ic_divide)
     ),

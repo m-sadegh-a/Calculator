@@ -131,7 +131,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
     private fun isClean() = input.value == listOf("0")
 
-    private fun isLastInputAnOperator() = lastElement in arrayOf("÷", "x", "-", "+")
+    private fun isLastInputAnOperator() = lastElement in arrayOf("÷", "x", "-", "+", "%")
 
     private fun isLastInputPercent() = lastElement == "%"
     private fun isLastInputEqual() = lastElement == "="
@@ -143,7 +143,6 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
             UserEvent.OnClearButtonClick -> onClearButtonClick()
             UserEvent.OnDeleteButtonClick -> onDeleteButtonClick()
             UserEvent.OnEqualButtonClick -> onEqualButtonClick()
-            UserEvent.OnPercentButtonClick -> onPercentButtonClick()
             UserEvent.OnPointButtonClick -> onPointButtonClick()
             is UserEvent.OnNumberButtonClick -> onNumberButtonClick(event.number)
             is UserEvent.OnOperatorButtonClick -> onOperatorButtonClick(event.symbol)
@@ -163,28 +162,6 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
         input.value = listOf("0")
         result.value = ""
-    }
-
-    private fun onPercentButtonClick() {
-
-        if (isLastInputEqual()) {
-
-            input.value = listOf(result.value, "%")
-
-            return
-        }
-
-        val lastCharacterInLastInput = lastElement.last()
-        if (lastCharacterInLastInput == '.') {
-
-            val newLastInput = lastElement.dropLast(1)
-            input.value = input.value.dropLast(1) + newLastInput
-
-        }
-
-        input.value = input.value + "%"
-
-        result.value = calculateResult()
     }
 
     private fun onDeleteButtonClick() {
@@ -208,28 +185,34 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
     private fun onOperatorButtonClick(operatorSymbol: String) {
 
-        if (isLastInputEqual()) {
-            input.value = if (result.value != ResultType.UNDEFINED) {
-                listOf(result.value, operatorSymbol)
-            } else {
-                listOf("0", operatorSymbol)
-            }
-            return
-        }
-
         if (lastElement.last() == '.') {
 
             val lastElement = lastElement.dropLast(1)
             input.value = input.value.dropLast(1) + lastElement
-
         }
 
-        if (isLastInputAnOperator()) {
+        when {
 
-            input.value = input.value.dropLast(1) + operatorSymbol
-        } else {
+            operatorSymbol == lastElement -> return
 
-            input.value = input.value + operatorSymbol
+            isLastInputEqual() -> {
+
+                input.value = if (result.value != ResultType.UNDEFINED) {
+                    listOf(result.value, operatorSymbol)
+                } else {
+                    listOf("0", operatorSymbol)
+                }
+            }
+
+            isLastInputPercent() -> {
+                input.value = input.value + operatorSymbol
+                result.value = calculateResult()
+            }
+
+            isLastInputAnOperator() -> input.value = input.value.dropLast(1) + operatorSymbol
+
+            else -> input.value = input.value + operatorSymbol
+
         }
     }
 
@@ -241,7 +224,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
             isLastInputEqual() || isClean() -> input.value = listOf(number.toString())
 
-            isLastInputAnOperator() || isLastInputPercent() -> {
+            isLastInputAnOperator() -> {
 
                 input.value = input.value + number.toString()
             }
@@ -262,7 +245,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
             isLastInputEqual() -> input.value = listOf("0.")
 
-            isLastInputAnOperator() || isLastInputPercent() -> {
+            isLastInputAnOperator() -> {
                 input.value = input.value + "0."
             }
 

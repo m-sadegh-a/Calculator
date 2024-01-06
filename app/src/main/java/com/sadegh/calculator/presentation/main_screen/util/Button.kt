@@ -24,14 +24,6 @@ sealed class Button(
             event = UserEvent.OnClearButtonClick
         )
 
-    object Percent :
-        Button(
-            contentColor = Color.Black,
-            color = Color.Gray,
-            symbolAsIconId = R.drawable.ic_percent,
-            event = UserEvent.OnPercentButtonClick
-        )
-
     object Delete :
         Button(
             symbolAsIconId = R.drawable.ic_backspace,
@@ -40,11 +32,16 @@ sealed class Button(
             event = UserEvent.OnDeleteButtonClick
         )
 
-    class Operator(symbol: String, iconId: Int) :
+    class Operator(
+        symbol: String,
+        iconId: Int,
+        contentColor: Color = Color.White,
+        color: Color = operatorColor
+    ) :
         Button(
             symbolAsString = symbol,
-            contentColor = Color.White,
-            color = operatorColor,
+            contentColor = contentColor,
+            color = color,
             symbolAsIconId = iconId,
             event = UserEvent.OnOperatorButtonClick(symbol = symbol)
         )

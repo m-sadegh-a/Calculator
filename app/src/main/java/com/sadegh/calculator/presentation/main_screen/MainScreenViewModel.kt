@@ -1,12 +1,11 @@
 package com.sadegh.calculator.presentation.main_screen
 
-import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sadegh.calculator.presentation.main_screen.util.Operator
 import com.sadegh.calculator.presentation.main_screen.util.ResultType
+import com.sadegh.calculator.presentation.main_screen.util.calculateResult
 import com.sadegh.calculator.presentation.main_screen.util.formatInput
 import com.sadegh.calculator.presentation.main_screen.util.formatResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -127,8 +126,6 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
     private val lastElement
         get() = input.value.last()
 
-    private fun isResultUndefined() = formattedResult.value == ResultType.UNDEFINED
-
     private fun isClean() = input.value == listOf("0")
 
     private fun isLastInputAnOperator() = lastElement in arrayOf("÷", "x", "-", "+", "%")
@@ -180,7 +177,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
             }
 
         }
-        result.value = calculateResult()
+        result.value = calculateResult(input.value)
     }
 
     private fun onOperatorButtonClick(operatorSymbol: String) {
@@ -206,7 +203,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
             isLastInputPercent() -> {
                 input.value = input.value + operatorSymbol
-                result.value = calculateResult()
+                result.value = calculateResult(input.value)
             }
 
             isLastInputAnOperator() -> input.value = input.value.dropLast(1) + operatorSymbol
@@ -235,7 +232,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
             }
         }
 
-        result.value = calculateResult()
+        result.value = calculateResult(input.value)
     }
 
     private fun onPointButtonClick() {
@@ -269,70 +266,5 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
         }
         input.value = input.value + "="
 
-    }
-
-    private fun calculateResult(): String {
-
-        if (isResultUndefined()) {
-            return formattedResult.value
-        }
-
-        if (isClean()) {
-            return ""
-        }
-
-        if (input.value.size == 1) {
-            return (input.value.single().toDouble() * 1).toString()
-        }
-
-        val operatorsSymbol = arrayOf(
-            arrayOf("÷", "x", "%"),
-            arrayOf("-", "+")
-        )
-
-        val newInput =
-            input.value.dropLast(if (isLastInputAnOperator()) 1 else 0).toMutableList()
-
-        operatorsSymbol.forEach { operatorsWithSamePrecedence ->
-
-            var index = 0
-            while (index < newInput.size) {
-
-                val numberOrOperator = newInput[index]
-
-                if (
-                    numberOrOperator == operatorsWithSamePrecedence[0] ||
-                    numberOrOperator == operatorsWithSamePrecedence[1] ||
-                    numberOrOperator == operatorsWithSamePrecedence.getOrNull(2)
-                ) {
-
-                    val number1 = newInput[index - 1].toDouble()
-                    var number2 = newInput.getOrNull(index + 1)?.toDoubleOrNull()
-
-                    if (numberOrOperator == "%" && number2 == null) {
-                        newInput.add(index = index + 1, "1")
-                        number2 = 1.0
-                    }
-
-                    if (number2 == 0.0 && numberOrOperator == "÷") {
-                        return ResultType.UNDEFINED
-                    }
-
-                    val operator = Operator(numberOrOperator)
-                    val result = operator.operate(number1, number2!!).toString()
-
-                    newInput[index + 1] = result
-                    newInput.removeAt(index)
-                    newInput.removeAt(index - 1)
-
-                } else {
-
-                    index++
-
-                }
-            }
-        }
-
-        return newInput.single()
     }
 }

@@ -36,33 +36,38 @@ sealed class Button(
         iconSize: Dp = 30.dp,
         contentColor: Color = Color.White,
         color: Color = operatorColor,
+        event: UserEvent
     ) : Button(
         symbolAsString = symbolAsString,
         contentColor = contentColor,
         color = color,
         symbolAsIconId = symbolAsIconId,
         iconSize = iconSize,
-        event = UserEvent.OnOperatorButtonClick(symbol = symbolAsString)
+        event = event
     ) {
 
         object SubtractionButton : OperatorButton(
             symbolAsString = "-",
             symbolAsIconId = R.drawable.ic_minus,
+            event = UserEvent.OnOperatorButtonClick.OnMinusButtonClick
         )
 
         object AddButton : OperatorButton(
             symbolAsString = "+",
             symbolAsIconId = R.drawable.ic_add,
+            event = UserEvent.OnOperatorButtonClick.OnAddButtonClick
         )
 
         object MultiplyButton : OperatorButton(
             symbolAsString = "x",
             symbolAsIconId = R.drawable.ic_multiply,
+            event = UserEvent.OnOperatorButtonClick.OnMultiplyButtonClick
         )
 
         object DivisionButton : OperatorButton(
             symbolAsString = "÷",
             symbolAsIconId = R.drawable.ic_divide,
+            event = UserEvent.OnOperatorButtonClick.OnDivisionButtonClick
         )
 
         object PercentageButton : OperatorButton(
@@ -70,6 +75,7 @@ sealed class Button(
             contentColor = Color.Black,
             color = Color.Gray,
             symbolAsIconId = R.drawable.ic_percent,
+            event = UserEvent.OnOperatorButtonClick.OnPercentButtonClick
         )
     }
 

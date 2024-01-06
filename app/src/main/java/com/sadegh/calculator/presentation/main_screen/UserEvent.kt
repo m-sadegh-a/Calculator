@@ -4,7 +4,14 @@ sealed interface UserEvent {
 
     object OnClearButtonClick : UserEvent
     object OnDeleteButtonClick : UserEvent
-    data class OnOperatorButtonClick(val symbol: String) : UserEvent
+    sealed class OnOperatorButtonClick(val symbol: String) : UserEvent {
+        object OnDivisionButtonClick : OnOperatorButtonClick("÷")
+        object OnMultiplyButtonClick : OnOperatorButtonClick("x")
+        object OnAddButtonClick : OnOperatorButtonClick("+")
+        object OnMinusButtonClick : OnOperatorButtonClick("-")
+        object OnPercentButtonClick : OnOperatorButtonClick("%")
+    }
+
     object OnEqualButtonClick : UserEvent
     data class OnNumberButtonClick(val number: Int) : UserEvent
     object OnPointButtonClick : UserEvent

@@ -11,8 +11,8 @@ fun calculateResult(input: List<String>): String {
     }
 
     val operatorsSymbol = listOf(
-        listOf("÷", "x", "%"),
-        listOf("-", "+")
+        listOf(Operator.MultiplyOperator, Operator.DivisionOperator, Operator.PercentageOperator),
+        listOf(Operator.AddOperator, Operator.SubtractOperator)
     )
 
     val inputWithoutLastOperator =
@@ -31,9 +31,9 @@ fun calculateResult(input: List<String>): String {
             val numberOrOperator = inputWithoutLastOperator[index]
 
             if (
-                numberOrOperator == operatorsWithSamePrecedence[0] ||
-                numberOrOperator == operatorsWithSamePrecedence[1] ||
-                numberOrOperator == operatorsWithSamePrecedence.getOrNull(2)
+                numberOrOperator == operatorsWithSamePrecedence[0].symbol ||
+                numberOrOperator == operatorsWithSamePrecedence[1].symbol ||
+                numberOrOperator == operatorsWithSamePrecedence.getOrNull(2)?.symbol
             ) {
 
                 val number1 = inputWithoutLastOperator[index - 1].toDouble()
@@ -48,8 +48,8 @@ fun calculateResult(input: List<String>): String {
                     return ResultType.UNDEFINED
                 }
 
-                val operator = Operator(numberOrOperator)
-                val result = operator.operate(number1, number2!!).toString()
+                val operator = Operator.fromSymbol(numberOrOperator)
+                val result = operator(number1, number2!!).toString()
 
                 inputWithoutLastOperator[index + 1] = result
                 inputWithoutLastOperator.removeAt(index)

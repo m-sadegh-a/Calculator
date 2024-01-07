@@ -1,19 +1,59 @@
 package com.sadegh.calculator.presentation.main_screen.util
 
-class Operator(private val symbol: String) {
+sealed class Operator(val symbol: String) {
 
-    companion object {
+    abstract operator fun invoke(number1: Double, number2: Double): Double
 
-        private val operatorMap = mapOf(
+    object AddOperator : Operator("+") {
 
-            "÷" to { number1: Double, number2: Double -> number1 / number2 },
-            "x" to { number1: Double, number2: Double -> number1 * number2 },
-            "-" to { number1: Double, number2: Double -> number1 - number2 },
-            "+" to { number1: Double, number2: Double -> number1 + number2 },
-            "%" to { number1: Double, number2: Double -> (number1 * number2) / 100 },
-        )
+        override operator fun invoke(number1: Double, number2: Double): Double {
+            return number1 + number2
+        }
     }
 
-    fun operate(number1: Double, number2: Double) =
-        operatorMap[symbol]?.let { it(number1, number2) }
+    object SubtractOperator : Operator("-") {
+
+        override operator fun invoke(number1: Double, number2: Double): Double {
+            return number1 - number2
+        }
+    }
+
+    object DivisionOperator : Operator("÷") {
+
+        override operator fun invoke(number1: Double, number2: Double): Double {
+            return number1 / number2
+        }
+    }
+
+    object MultiplyOperator : Operator("x") {
+
+        override operator fun invoke(number1: Double, number2: Double): Double {
+            return number1 * number2
+        }
+    }
+
+    object PercentageOperator : Operator("%") {
+
+        override operator fun invoke(number1: Double, number2: Double): Double {
+            return (number1 * number2) / 100
+        }
+    }
+
+    companion object {
+        fun fromSymbol(symbol: String): Operator {
+
+            return when (symbol) {
+
+                "+" -> AddOperator
+
+                "-" -> SubtractOperator
+
+                "x" -> MultiplyOperator
+
+                "%" -> PercentageOperator
+
+                else -> DivisionOperator
+            }
+        }
+    }
 }

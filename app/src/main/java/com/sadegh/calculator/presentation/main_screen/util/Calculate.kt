@@ -48,13 +48,17 @@ fun calculateResult(input: List<String>): String {
                     return ResultType.UNDEFINED
                 }
 
-                val operator = Operator.fromSymbol(numberOrOperator)
-                val result = operator(number1, number2!!).toString()
+                val operator = Operator.getOperatorFromSymbolOrNull(numberOrOperator)
+                operator?.let {
 
-                inputWithoutLastOperator[index + 1] = result
-                inputWithoutLastOperator.removeAt(index)
-                inputWithoutLastOperator.removeAt(index - 1)
+                    val result = operator(number1, number2!!).toString()
 
+                    inputWithoutLastOperator[index + 1] = result
+
+                    inputWithoutLastOperator.removeAt(index)
+
+                    inputWithoutLastOperator.removeAt(index - 1)
+                }
             } else {
 
                 index++

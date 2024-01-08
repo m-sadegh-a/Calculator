@@ -13,19 +13,21 @@ sealed interface UserEvent {
     }
 
     object OnEqualButtonClick : UserEvent
-    sealed class OnDigitButtonClick(val number: Int) : UserEvent{
+    sealed class OnNumberButtonClick(val number: String) : UserEvent {
 
-        object OnDigit0ButtonClick:OnDigitButtonClick(0)
-        object OnDigit1ButtonClick:OnDigitButtonClick(1)
-        object OnDigit2ButtonClick:OnDigitButtonClick(2)
-        object OnDigit3ButtonClick:OnDigitButtonClick(3)
-        object OnDigit4ButtonClick:OnDigitButtonClick(4)
-        object OnDigit5ButtonClick:OnDigitButtonClick(5)
-        object OnDigit6ButtonClick:OnDigitButtonClick(6)
-        object OnDigit7ButtonClick:OnDigitButtonClick(7)
-        object OnDigit8ButtonClick:OnDigitButtonClick(8)
-        object OnDigit9ButtonClick:OnDigitButtonClick(9)
+        object OnDigit0ButtonClick : OnNumberButtonClick("0")
+        object OnDigit1ButtonClick : OnNumberButtonClick("1")
+        object OnDigit2ButtonClick : OnNumberButtonClick("2")
+        object OnDigit3ButtonClick : OnNumberButtonClick("3")
+        object OnDigit4ButtonClick : OnNumberButtonClick("4")
+        object OnDigit5ButtonClick : OnNumberButtonClick("5")
+        object OnDigit6ButtonClick : OnNumberButtonClick("6")
+        object OnDigit7ButtonClick : OnNumberButtonClick("7")
+        object OnDigit8ButtonClick : OnNumberButtonClick("8")
+        object OnDigit9ButtonClick : OnNumberButtonClick("9")
+        object OnNeperNumberButtonClick:OnNumberButtonClick("e")
     }
+
     object OnPointButtonClick : UserEvent
     object OnButtonsExpansionButtonClick : UserEvent
 

@@ -165,7 +165,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
             UserEvent.OnBackspaceButtonClick -> onBackspaceButtonClick()
             UserEvent.OnEqualButtonClick -> onEqualButtonClick()
             UserEvent.OnPointButtonClick -> onPointButtonClick()
-            is UserEvent.OnDigitButtonClick -> onNumberButtonClick(event.number)
+            is UserEvent.OnNumberButtonClick -> onNumberButtonClick(event.number)
             is UserEvent.OnOperatorButtonClick -> onOperatorButtonClick(event.symbol)
         }
     }
@@ -231,17 +231,17 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    private fun onNumberButtonClick(number: Int) {
+    private fun onNumberButtonClick(number: String) {
 
         when {
 
             lastElement.length == 15 -> return
 
-            isLastInputEqual() || isClean() -> input.value = listOf(number.toString())
+            isLastInputEqual() || isClean() -> input.value = listOf(number)
 
-            isLastInputABasicOperator() || isLastInputPercent() -> {
+            isLastInputABasicOperator() || isLastInputPercent() || number == "e" || lastElement == "e" -> {
 
-                input.value = input.value + number.toString()
+                input.value = input.value + number
             }
 
             else -> {

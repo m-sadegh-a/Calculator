@@ -114,7 +114,7 @@ fun separateAllThreeDigitsOfAllNumbersWithComma(input: List<String>): List<Strin
 
     return input.map { numberOrOperator ->
 
-        if (numberOrOperator in arrayOf("÷", "x", "-", "+", '=', '%')) {
+        if (numberOrOperator in arrayOf("÷", "x", "-", "+", "=", "%")||numberOrOperator=="e") {
             return@map numberOrOperator
         }
 

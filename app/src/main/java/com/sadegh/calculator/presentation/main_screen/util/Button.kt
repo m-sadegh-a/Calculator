@@ -87,59 +87,64 @@ sealed class Button(
         event = UserEvent.OnEqualButtonClick
     )
 
-    sealed class DigitButton(number: Int, event: UserEvent) : Button(
-        symbolAsString = number.toString(),
+    sealed class NumberButton(number: String, event: UserEvent) : Button(
+        symbolAsString = number,
         event = event
     ) {
 
-        object Digit0Button : DigitButton(
-            number = 0,
-            event = UserEvent.OnDigitButtonClick.OnDigit0ButtonClick
+        object Digit0Button : NumberButton(
+            number = "0",
+            event = UserEvent.OnNumberButtonClick.OnDigit0ButtonClick
         )
 
-        object Digit1Button : DigitButton(
-            number = 1,
-            event = UserEvent.OnDigitButtonClick.OnDigit1ButtonClick
+        object Digit1Button : NumberButton(
+            number = "1",
+            event = UserEvent.OnNumberButtonClick.OnDigit1ButtonClick
         )
 
-        object Digit2Button : DigitButton(
-            number = 2,
-            event = UserEvent.OnDigitButtonClick.OnDigit2ButtonClick
+        object Digit2Button : NumberButton(
+            number = "2",
+            event = UserEvent.OnNumberButtonClick.OnDigit2ButtonClick
         )
 
-        object Digit3Button : DigitButton(
-            number = 3,
-            event = UserEvent.OnDigitButtonClick.OnDigit3ButtonClick
+        object Digit3Button : NumberButton(
+            number = "3",
+            event = UserEvent.OnNumberButtonClick.OnDigit3ButtonClick
         )
 
-        object Digit4Button : DigitButton(
-            number = 4,
-            event = UserEvent.OnDigitButtonClick.OnDigit4ButtonClick
+        object Digit4Button : NumberButton(
+            number = "4",
+            event = UserEvent.OnNumberButtonClick.OnDigit4ButtonClick
         )
 
-        object Digit5Button : DigitButton(
-            number = 5,
-            event = UserEvent.OnDigitButtonClick.OnDigit5ButtonClick
+        object Digit5Button : NumberButton(
+            number = "5",
+            event = UserEvent.OnNumberButtonClick.OnDigit5ButtonClick
         )
 
-        object Digit6Button : DigitButton(
-            number = 6,
-            event = UserEvent.OnDigitButtonClick.OnDigit6ButtonClick
+        object Digit6Button : NumberButton(
+            number = "6",
+            event = UserEvent.OnNumberButtonClick.OnDigit6ButtonClick
         )
 
-        object Digit7Button : DigitButton(
-            number = 7,
-            event = UserEvent.OnDigitButtonClick.OnDigit7ButtonClick
+        object Digit7Button : NumberButton(
+            number = "7",
+            event = UserEvent.OnNumberButtonClick.OnDigit7ButtonClick
         )
 
-        object Digit8Button : DigitButton(
-            number = 8,
-            event = UserEvent.OnDigitButtonClick.OnDigit8ButtonClick
+        object Digit8Button : NumberButton(
+            number = "8",
+            event = UserEvent.OnNumberButtonClick.OnDigit8ButtonClick
         )
 
-        object Digit9Button : DigitButton(
-            number = 9,
-            event = UserEvent.OnDigitButtonClick.OnDigit9ButtonClick
+        object Digit9Button : NumberButton(
+            number = "9",
+            event = UserEvent.OnNumberButtonClick.OnDigit9ButtonClick
+        )
+
+        object NeperNumberButton : NumberButton(
+            number = "e",
+            event = UserEvent.OnNumberButtonClick.OnNeperNumberButtonClick
         )
     }
 

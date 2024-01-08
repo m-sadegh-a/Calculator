@@ -7,7 +7,12 @@ fun calculateResult(inputs: List<String>): String {
     }
 
     if (inputs.size == 1) {
-        return (inputs.single().toDouble() * 1).toString()
+        return if (inputs.single() == "e") {
+            Math.E.toString()
+        } else {
+
+            (inputs.single().toDouble() * 1).toString()
+        }
     }
 
     val inputsWithoutLastOperator =
@@ -53,6 +58,22 @@ infix fun MutableList<String>.applyOperatorsWithPriority(priority: Int) {
 
         val input = this[index]
 
+        if (input == "e") {
+
+            val nextInput = this.getOrNull(index + 1)
+            if (nextInput?.toDoubleOrNull() != null) {
+
+                this.add(index + 1, "x")
+            }
+
+            val beforeInput = this.getOrNull(index - 1)
+            if (beforeInput?.toDoubleOrNull() != null) {
+                this.add(index, "x")
+
+                index++
+            }
+        }
+
         //operator is null when it is not equal to an operator in Operator class
         val operator = Operator.getOperatorFromSymbolOrNull(input)
 
@@ -94,8 +115,10 @@ fun MutableList<String>.applyOperator(operator: Operator, operatorIndex: Int) {
 
     }
 
-    val number1 = this[operatorIndex - 1].toDouble()
-    val number2 = this[operatorIndex + 1].toDouble()
+    val nextInput = this[operatorIndex + 1]
+    val beforeInput = this[operatorIndex - 1]
+    val number1 = if (beforeInput == "e") Math.E else beforeInput.toDouble()
+    val number2 = if (nextInput == "e") Math.E else nextInput.toDouble()
 
     val result = operate(number1, number2, operator)
 

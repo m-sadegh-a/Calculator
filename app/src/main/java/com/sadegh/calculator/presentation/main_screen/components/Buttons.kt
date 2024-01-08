@@ -19,10 +19,14 @@ import com.sadegh.calculator.presentation.main_screen.UserEvent
 @Composable
 fun Buttons(
     modifier: Modifier,
-    startIndex: Int,
+    isExpand: Boolean,
     buttons: List<List<Button>>,
     onEvent: (UserEvent) -> Unit
 ) {
+
+    val startIndex = remember(isExpand) {
+        if (isExpand) 0 else 1
+    }
 
     Column(
         modifier = modifier

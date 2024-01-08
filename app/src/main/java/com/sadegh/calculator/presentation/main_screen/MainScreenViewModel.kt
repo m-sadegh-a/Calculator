@@ -69,8 +69,8 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
             ""
         )
 
-    private val _startIndex = MutableStateFlow(1)
-    val startIndex = _startIndex.asStateFlow()
+    private val _isExpand = MutableStateFlow(false)
+    val isExpand = _isExpand.asStateFlow()
 
     val inputFontSize = formattedInput
         .transform {
@@ -172,11 +172,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
     private fun onButtonsExpansionButtonClick() {
 
-        _startIndex.value = if (_startIndex.value == 1) {
-            0
-        } else {
-            1
-        }
+        _isExpand.value = !_isExpand.value
     }
 
     private fun onClearButtonClick() {
@@ -262,7 +258,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
             isLastInputEqual() -> input.value = listOf("0.")
 
-            isLastInputABasicOperator()||isLastInputPercent() -> {
+            isLastInputABasicOperator() || isLastInputPercent() -> {
                 input.value = input.value + "0."
             }
 

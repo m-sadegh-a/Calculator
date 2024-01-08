@@ -50,12 +50,12 @@ fun HomeScreen() {
 
         val buttons = buttons
 
-        val startIndex by viewModel.startIndex.collectAsState()
+        val isExpand by viewModel.isExpand.collectAsState()
 
         Buttons(
             modifier = Modifier.fillMaxSize(),
             buttons = buttons,
-            startIndex = startIndex,
+            isExpand = isExpand,
             onEvent = viewModel::onEvent
         )
     }

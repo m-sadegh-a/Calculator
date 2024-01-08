@@ -37,10 +37,10 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
     private val result = input.transform {
 
-        val isLastInputAnOperatorButNotPercentage = isLastInputAnOperator() && !isLastInputPercent()
+        val isLastInputABasicOperator = isLastInputABasicOperator()
         val isLastUseEventNotOnBackspaceClick = lastUserEvent !is UserEvent.OnBackspaceButtonClick
 
-        if (isLastInputAnOperatorButNotPercentage && isLastUseEventNotOnBackspaceClick) {
+        if (isLastInputABasicOperator && isLastUseEventNotOnBackspaceClick) {
 
             return@transform
 
@@ -150,7 +150,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
     private fun isClean() = input.value == listOf("0")
 
-    private fun isLastInputAnOperator() = lastElement in arrayOf("÷", "x", "-", "+", "%")
+    private fun isLastInputABasicOperator() = lastElement in arrayOf("÷", "x", "-", "+")
 
     private fun isLastInputPercent() = lastElement == "%"
     private fun isLastInputEqual() = lastElement == "="
@@ -217,7 +217,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
                 }
             }
 
-            isLastInputAnOperator() && !isLastInputPercent() -> {
+            isLastInputABasicOperator() -> {
                 input.value = input.value.dropLast(1) + operatorSymbol
             }
 
@@ -243,7 +243,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
             isLastInputEqual() || isClean() -> input.value = listOf(number.toString())
 
-            isLastInputAnOperator() -> {
+            isLastInputABasicOperator() || isLastInputPercent() -> {
 
                 input.value = input.value + number.toString()
             }
@@ -262,7 +262,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
             isLastInputEqual() -> input.value = listOf("0.")
 
-            isLastInputAnOperator() -> {
+            isLastInputABasicOperator()||isLastInputPercent() -> {
                 input.value = input.value + "0."
             }
 

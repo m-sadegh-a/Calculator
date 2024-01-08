@@ -204,12 +204,6 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
     private fun onOperatorButtonClick(operatorSymbol: String) {
 
-        if (lastElement.last() == '.') {
-
-            val lastElement = lastElement.dropLast(1)
-            input.value = input.value.dropLast(1) + lastElement
-        }
-
         when {
 
             operatorSymbol == lastElement -> return
@@ -223,14 +217,21 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
                 }
             }
 
-            isLastInputPercent() -> {
-                input.value = input.value + operatorSymbol
+            isLastInputAnOperator() && !isLastInputPercent() -> {
+                input.value = input.value.dropLast(1) + operatorSymbol
             }
 
-            isLastInputAnOperator() -> input.value = input.value.dropLast(1) + operatorSymbol
+            //last input is percentage or a number
+            else -> {
 
-            else -> input.value = input.value + operatorSymbol
+                if (lastElement.last() == '.') {
 
+                    val lastElement = lastElement.dropLast(1)
+                    input.value = input.value.dropLast(1) + lastElement
+                }
+
+                input.value = input.value + operatorSymbol
+            }
         }
     }
 

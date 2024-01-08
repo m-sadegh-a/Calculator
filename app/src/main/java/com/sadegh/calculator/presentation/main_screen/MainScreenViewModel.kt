@@ -19,9 +19,11 @@ import javax.inject.Inject
 @HiltViewModel
 class MainScreenViewModel @Inject constructor() : ViewModel() {
 
-    private val inputs = MutableStateFlow(listOf("0"))
+    private var lastUserEvent: UserEvent? = null
 
-    val formattedInput = inputs.transform {
+    private val input = MutableStateFlow(listOf("0"))
+
+    val formattedInput = input.transform {
 
         val formattedInput = formatInput(it)
 
@@ -33,7 +35,27 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
             "0"
         )
 
-    private val result = MutableStateFlow("")
+    private val result = input.transform {
+
+        val isLastInputAnOperatorButNotPercentage = isLastInputAnOperator() && !isLastInputPercent()
+        val isLastUseEventNotOnBackspaceClick = lastUserEvent !is UserEvent.OnBackspaceButtonClick
+
+        if (isLastInputAnOperatorButNotPercentage && isLastUseEventNotOnBackspaceClick) {
+
+            return@transform
+
+        }
+
+        val result = calculateResult(it)
+        emit(result)
+
+    }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            ""
+        )
+
     val formattedResult = result
         .transform {
 
@@ -88,7 +110,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
         )
 
 
-    val resultFontSize = inputs
+    val resultFontSize = input
         .transform {
 
             if (it.last() == "=" && result.value != ResultType.UNDEFINED) {
@@ -103,7 +125,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
         )
 
 
-    val inputTextColor = inputs
+    val inputTextColor = input
         .transform {
             val color = if (it.last() == "=") Color.Gray else Color.White
             emit(color)
@@ -113,7 +135,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
             Color.White
         )
 
-    val resultTextColor = inputs
+    val resultTextColor = input
         .transform {
             val color = if (it.last() == "=") Color.White else Color.Gray
             emit(color)
@@ -124,9 +146,9 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
         )
 
     private val lastElement
-        get() = inputs.value.last()
+        get() = input.value.last()
 
-    private fun isClean() = inputs.value == listOf("0")
+    private fun isClean() = input.value == listOf("0")
 
     private fun isLastInputAnOperator() = lastElement in arrayOf("÷", "x", "-", "+", "%")
 
@@ -134,6 +156,8 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
     private fun isLastInputEqual() = lastElement == "="
 
     fun onEvent(event: UserEvent) {
+
+        lastUserEvent = event
 
         when (event) {
             UserEvent.OnButtonsExpansionButtonClick -> onButtonsExpansionButtonClick()
@@ -157,8 +181,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
     private fun onClearButtonClick() {
 
-        inputs.value = listOf("0")
-        result.value = ""
+        input.value = listOf("0")
     }
 
     private fun onBackspaceButtonClick() {
@@ -167,17 +190,16 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
             isLastInputEqual() -> return
 
-            inputs.value.singleOrNull()?.length == 1 -> inputs.value = listOf("0")
+            input.value.singleOrNull()?.length == 1 -> input.value = listOf("0")
 
-            lastElement.length == 1 -> inputs.value = inputs.value.dropLast(1)
+            lastElement.length == 1 -> input.value = input.value.dropLast(1)
 
             else -> {
                 val newLastInput = lastElement.dropLast(1)
-                inputs.value = inputs.value.dropLast(1) + newLastInput
+                input.value = input.value.dropLast(1) + newLastInput
             }
 
         }
-        result.value = calculateResult(inputs.value)
     }
 
     private fun onOperatorButtonClick(operatorSymbol: String) {
@@ -185,7 +207,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
         if (lastElement.last() == '.') {
 
             val lastElement = lastElement.dropLast(1)
-            inputs.value = inputs.value.dropLast(1) + lastElement
+            input.value = input.value.dropLast(1) + lastElement
         }
 
         when {
@@ -194,7 +216,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
             isLastInputEqual() -> {
 
-                inputs.value = if (result.value != ResultType.UNDEFINED) {
+                input.value = if (result.value != ResultType.UNDEFINED) {
                     listOf(result.value, operatorSymbol)
                 } else {
                     listOf("0", operatorSymbol)
@@ -202,13 +224,12 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
             }
 
             isLastInputPercent() -> {
-                inputs.value = inputs.value + operatorSymbol
-                result.value = calculateResult(inputs.value)
+                input.value = input.value + operatorSymbol
             }
 
-            isLastInputAnOperator() -> inputs.value = inputs.value.dropLast(1) + operatorSymbol
+            isLastInputAnOperator() -> input.value = input.value.dropLast(1) + operatorSymbol
 
-            else -> inputs.value = inputs.value + operatorSymbol
+            else -> input.value = input.value + operatorSymbol
 
         }
     }
@@ -219,20 +240,18 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
             lastElement.length == 15 -> return
 
-            isLastInputEqual() || isClean() -> inputs.value = listOf(number.toString())
+            isLastInputEqual() || isClean() -> input.value = listOf(number.toString())
 
             isLastInputAnOperator() -> {
 
-                inputs.value = inputs.value + number.toString()
+                input.value = input.value + number.toString()
             }
 
             else -> {
                 val newLastElement = "${lastElement}$number"
-                inputs.value = inputs.value.dropLast(1) + newLastElement
+                input.value = input.value.dropLast(1) + newLastElement
             }
         }
-
-        result.value = calculateResult(inputs.value)
     }
 
     private fun onPointButtonClick() {
@@ -240,15 +259,15 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
         when {
             lastElement.length == 15 || "." in lastElement -> return
 
-            isLastInputEqual() -> inputs.value = listOf("0.")
+            isLastInputEqual() -> input.value = listOf("0.")
 
             isLastInputAnOperator() -> {
-                inputs.value = inputs.value + "0."
+                input.value = input.value + "0."
             }
 
             else -> {
                 val newLastElement = "$lastElement."
-                inputs.value = inputs.value.dropLast(1) + newLastElement
+                input.value = input.value.dropLast(1) + newLastElement
             }
         }
     }
@@ -261,10 +280,10 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
         if (lastElement.last() == '.') {
 
-            inputs.value = inputs.value.dropLast(1)
+            input.value = input.value.dropLast(1)
 
         }
-        inputs.value = inputs.value + "="
+        input.value = input.value + "="
 
     }
 }

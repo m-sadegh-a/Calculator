@@ -12,7 +12,7 @@ val buttons = listOf(
         Button.UndefinedButton,
         Button.ClearButton,
         Button.OperatorButton.PercentageButton,
-        Button.DeleteButton,
+        Button.BackspaceButton,
         Button.OperatorButton.DivisionButton
     ),
     listOf(

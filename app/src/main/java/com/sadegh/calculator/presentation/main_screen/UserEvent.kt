@@ -3,7 +3,7 @@ package com.sadegh.calculator.presentation.main_screen
 sealed interface UserEvent {
 
     object OnClearButtonClick : UserEvent
-    object OnDeleteButtonClick : UserEvent
+    object OnBackspaceButtonClick : UserEvent
     sealed class OnOperatorButtonClick(val symbol: String) : UserEvent {
         object OnDivisionButtonClick : OnOperatorButtonClick("÷")
         object OnMultiplyButtonClick : OnOperatorButtonClick("x")

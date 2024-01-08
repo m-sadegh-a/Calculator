@@ -23,11 +23,11 @@ sealed class Button(
         event = UserEvent.OnClearButtonClick
     )
 
-    object DeleteButton : Button(
+    object BackspaceButton : Button(
         symbolAsIconId = R.drawable.ic_backspace,
         contentColor = Color.Black,
         color = Color.Gray,
-        event = UserEvent.OnDeleteButtonClick
+        event = UserEvent.OnBackspaceButtonClick
     )
 
     sealed class OperatorButton(

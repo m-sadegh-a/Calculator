@@ -32,7 +32,7 @@ sealed class Operator(val symbol: String, val priority: Int) {
         }
     }
 
-    object PercentageOperator : Operator("%", 4) {
+    object PercentageOperator : Operator("%", 1) {
 
         override operator fun invoke(number1: Double, number2: Double): Double {
             return (number1 * number2) / 100
@@ -41,7 +41,7 @@ sealed class Operator(val symbol: String, val priority: Int) {
 
     companion object {
 
-        val priorities = listOf(4, 5)
+        val priorities = listOf(1, 4, 5)
 
         val symbols = listOf("x", "÷", "%", "+", "-")
 

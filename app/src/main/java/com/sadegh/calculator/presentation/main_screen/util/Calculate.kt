@@ -58,34 +58,50 @@ infix fun MutableList<String>.applyOperatorsWithPriority(priority: Int) {
 
         if (operator != null && operator.priority == priority) {
 
-            if (operator == Operator.PercentageOperator) {
-
-                //nextInput is null when the percentage is the last element in inputs
-                val nextInput = this.getOrNull(index + 1)
-
-                /*
-                check if there is another operator immediately after the percentage
-                or if the percentage is the last input
-                 */
-                if (nextInput == null || nextInput in Operator.symbols) {
-                    this.add(index + 1, "1")
-                }
-            }
-
-            val number1 = this[index - 1].toDouble()
-            val number2 = this[index + 1].toDouble()
-
-            val result = operate(number1, number2, operator)
-
-            this[index + 1] = result
-            this.removeAt(index)
-            this.removeAt(index - 1)
+            this.applyOperator(operator, index)
 
             index--
         }
 
         index++
     }
+}
+
+fun MutableList<String>.applyOperator(operator: Operator, operatorIndex: Int) {
+
+    if (operator == Operator.PercentageOperator) {
+
+        //nextInput is null when the percentage is the last element in inputs
+        val nextInput = this.getOrNull(operatorIndex + 1)
+
+        /*
+        check that there is a number after the percentage
+        Example:
+        inputs before if branch = 9 % 3
+        inputs after if branch = 9 % x 3
+         */
+        if (nextInput?.toDoubleOrNull() != null) {
+
+            this.add(operatorIndex + 1, "x")
+
+        }
+
+        /*
+        add number 1 after percentage operator
+        Example: 9 % x 3 -> 9 % 1 x 3
+         */
+        this.add(operatorIndex + 1, "1")
+
+    }
+
+    val number1 = this[operatorIndex - 1].toDouble()
+    val number2 = this[operatorIndex + 1].toDouble()
+
+    val result = operate(number1, number2, operator)
+
+    this[operatorIndex + 1] = result
+    this.removeAt(operatorIndex)
+    this.removeAt(operatorIndex - 1)
 }
 
 fun operate(number1: Double, number2: Double, operator: Operator): String {

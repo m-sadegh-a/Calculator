@@ -1,4 +1,4 @@
-package com.sadegh.calculator.homeScreen
+package com.sadegh.calculator.presentation.main_screen.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -6,59 +6,55 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sadegh.calculator.presentation.main_screen.util.Button
+import com.sadegh.calculator.presentation.main_screen.UserEvent
 
 @Composable
 fun Buttons(
     modifier: Modifier,
-    screen: Screen,
-    buttons: Array<Array<Button>>,
-    updateScreen: (Screen) -> Unit
-
+    startIndex: Int,
+    buttons: List<List<Button>>,
+    onEvent: (UserEvent) -> Unit
 ) {
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(7.dp),
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        for (row in buttons.indices) {
+        for (row in startIndex until buttons.size) {
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
+                horizontalArrangement = Arrangement.End
             ) {
 
-                for (button in buttons[row]) {
+                for (column in startIndex until buttons[row].size) {
 
+                    val button = buttons[row][column]
                     TextButton(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .weight(button.weight)
+                            .weight(1f)
                             .padding(vertical = 5.dp, horizontal = 7.dp)
-                            .clip(RoundedCornerShape(30.dp))
+                            .clip(RoundedCornerShape(if (startIndex == 1) 30.dp else 20.dp))
                             .background(button.color),
                         onClick = {
 
-                            screen.onClickButtonChange(button.symbolAsString)
-                            updateScreen(
-                                Screen(
-                                    result = screen.result,
-                                    input = screen.input
-                                )
-                            )
+                            button.event?.let(onEvent)
 
                         },
 
@@ -73,7 +69,7 @@ fun Buttons(
                             )
                         } else {
                             Text(
-                                text = button.symbolAsString,
+                                text = button.symbolAsString!!,
                                 fontSize = 30.sp,
                                 color = button.contentColor,
                             )
@@ -84,6 +80,7 @@ fun Buttons(
         }
     }
 }
+
 
 
 

@@ -75,7 +75,7 @@ fun addNewLineBetweenString(input: String, newLineIndex: Int) = buildString {
 
 fun formatResult(result: String): String {
 
-    if (result == ResultType.UNDEFINED) {
+    if (result == ResultType.UNDEFINED || result.isEmpty()) {
         return result
     }
 
@@ -126,10 +126,14 @@ fun separateAllThreeDigitsOfAllNumbersWithComma(input: List<String>): List<Strin
 /**
  * This function separates all three digits of the number with comma
  */
-
 fun separateAllThreeDigitsOfNumberWithComma(number: String): String {
 
+    if (number.toDouble() in -1.0..0.0) {
+        return number
+    }
+
     val pointIndex = number.indexOf('.')
+
     val (beforePoint, afterPoint) = if (pointIndex == -1) {
         number to ""
     } else {
@@ -138,10 +142,7 @@ fun separateAllThreeDigitsOfNumberWithComma(number: String): String {
         beforePoint to ".$afterPoint"
     }
 
-    return try {
-        val decimalFormat = DecimalFormat("#,###")
-        decimalFormat.format(beforePoint.toLong()) + afterPoint
-    } catch (e: Exception) {
-        number
-    }
+    val decimalFormat = DecimalFormat("#,###")
+    return decimalFormat.format(beforePoint.toLong()) + afterPoint
+
 }

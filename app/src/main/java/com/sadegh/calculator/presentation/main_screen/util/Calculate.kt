@@ -1,18 +1,13 @@
 package com.sadegh.calculator.presentation.main_screen.util
 
-fun calculateResult(inputs: List<String>): String {
+fun calculateResult(inputs: List<Input>): String {
 
-    if (inputs == listOf("0")) {
+    if (inputs.isEmpty()) {
         return ""
     }
 
     if (inputs.size == 1) {
-        return if (inputs.single() == "e") {
-            Math.E.toString()
-        } else {
-
-            (inputs.single().toDouble() * 1).toString()
-        }
+        return (inputs.single() as Input.Number).doubleValue.toString()
     }
 
     val formattedInputs = inputs.toMutableList().format()
@@ -23,9 +18,9 @@ fun calculateResult(inputs: List<String>): String {
 
 }
 
-private fun MutableList<String>.format(): MutableList<String> {
+private fun MutableList<Input>.format(): MutableList<Input> {
 
-    if (this.last() in listOf("÷", "x", "-", "+")) {
+    if (this.last() is Input.OperatorInput.BasicOperatorInput) {
         this.removeLast()
     }
 
@@ -37,12 +32,16 @@ private fun MutableList<String>.format(): MutableList<String> {
 
         when (inputsWithoutLastOperator[index]) {
 
-            "e" -> {
+            is Input.Number.NeperNumber -> {
                 index = inputsWithoutLastOperator
                     .changeInputsWhenInputIsNeperNumberAndGetNewIndexValue(index)
             }
 
-            "%" -> inputsWithoutLastOperator.changeInputsWhenInputIsPercentageOperator(index)
+            is Input.OperatorInput.PercentageOperatorInput -> {
+                inputsWithoutLastOperator.changeInputsWhenInputIsPercentageOperator(index)
+            }
+
+            else -> Unit
 
         }
 
@@ -55,7 +54,7 @@ private fun MutableList<String>.format(): MutableList<String> {
 }
 
 private fun calculateResult(
-    inputs: MutableList<String>,
+    inputs: MutableList<Input>,
     operatorsPriorities: List<Int>,
 ): String {
 
@@ -71,11 +70,11 @@ private fun calculateResult(
         return e.message!!
     }
 
-    return inputs.single()
+    return inputs.single().toString()
 
 }
 
-private infix fun MutableList<String>.applyOperatorsWithPriority(priority: Int) {
+private infix fun MutableList<Input>.applyOperatorsWithPriority(priority: Int) {
 
     var index = 0
 
@@ -83,12 +82,9 @@ private infix fun MutableList<String>.applyOperatorsWithPriority(priority: Int) 
 
         val input = this[index]
 
-        //operator is null when it is not equal to an operator in Operator class
-        val operator = Input.OperatorInput.getOperatorFromSymbolOrNull(input)
+        if (input is Input.OperatorInput && input.priority == priority) {
 
-        if (operator != null && operator.priority == priority) {
-
-            this.applyOperator(operator, index)
+            this.applyOperator(input, index)
 
             index--
         }
@@ -97,13 +93,10 @@ private infix fun MutableList<String>.applyOperatorsWithPriority(priority: Int) 
     }
 }
 
-private fun MutableList<String>.applyOperator(operator: Input.OperatorInput, operatorIndex: Int) {
+private fun MutableList<Input>.applyOperator(operator: Input.OperatorInput, operatorIndex: Int) {
 
-    val nextInput = this[operatorIndex + 1]
-    val beforeInput = this[operatorIndex - 1]
-
-    val number1 = if (beforeInput == "e") Math.E else beforeInput.toDouble()
-    val number2 = if (nextInput == "e") Math.E else nextInput.toDouble()
+    val number1 = (this[operatorIndex - 1] as Input.Number).doubleValue
+    val number2 = (this[operatorIndex + 1] as Input.Number).doubleValue
 
     val result = operate(number1, number2, operator)
 
@@ -112,7 +105,7 @@ private fun MutableList<String>.applyOperator(operator: Input.OperatorInput, ope
     this.removeAt(operatorIndex - 1)
 }
 
-private fun MutableList<String>.changeInputsWhenInputIsPercentageOperator(percentOperatorIndex: Int) {
+private fun MutableList<Input>.changeInputsWhenInputIsPercentageOperator(percentOperatorIndex: Int) {
 
     //nextInput is null when the percentage is the last element in inputs
     val nextInput = this.getOrNull(percentOperatorIndex + 1)
@@ -123,9 +116,12 @@ private fun MutableList<String>.changeInputsWhenInputIsPercentageOperator(percen
     inputs before if branch = 9 % 3
     inputs after if branch = 9 % x 3
      */
-    if (nextInput?.toDoubleOrNull() != null) {
+    if (nextInput is Input.Number) {
 
-        this.add(percentOperatorIndex + 1, "x")
+        this.add(
+            percentOperatorIndex + 1,
+            Input.OperatorInput.BasicOperatorInput.MultiplyOperatorInput
+        )
 
     }
 
@@ -133,24 +129,24 @@ private fun MutableList<String>.changeInputsWhenInputIsPercentageOperator(percen
     add number 1 after percentage operator
     Example: 9 % x 3 -> 9 % 1 x 3
      */
-    this.add(percentOperatorIndex + 1, "1")
+    this.add(percentOperatorIndex + 1, Input.Number("1"))
 }
 
-private fun MutableList<String>.changeInputsWhenInputIsNeperNumberAndGetNewIndexValue(
+private fun MutableList<Input>.changeInputsWhenInputIsNeperNumberAndGetNewIndexValue(
     neperIndex: Int
 ): Int {
 
+    val beforeInput = this.getOrNull(neperIndex - 1)
     val nextInput = this.getOrNull(neperIndex + 1)
 
-    if (nextInput?.toDoubleOrNull() != null) {
+    if (nextInput is Input.Number) {
 
-        this.add(neperIndex + 1, "x")
+        this.add(neperIndex + 1, Input.OperatorInput.BasicOperatorInput.MultiplyOperatorInput)
     }
 
-    val beforeInput = this.getOrNull(neperIndex - 1)
-    if (beforeInput?.toDoubleOrNull() != null) {
+    if (beforeInput is Input.Number) {
 
-        this.add(neperIndex, "x")
+        this.add(neperIndex, Input.OperatorInput.BasicOperatorInput.MultiplyOperatorInput)
 
         return neperIndex + 1
 
@@ -159,12 +155,14 @@ private fun MutableList<String>.changeInputsWhenInputIsNeperNumberAndGetNewIndex
     return neperIndex
 }
 
-private fun operate(number1: Double, number2: Double, operator: Input.OperatorInput): String {
+private fun operate(number1: Double, number2: Double, operator: Input.OperatorInput): Input {
 
     if (number2 == 0.0 && operator == Input.OperatorInput.BasicOperatorInput.DivisionOperatorInput) {
         throw ArithmeticException(ResultType.UNDEFINED)
     }
 
-    return operator(number1, number2).toString()
+    val inputAsDouble = operator(number1, number2)
+
+    return Input.Number(inputAsDouble.toString())
 
 }

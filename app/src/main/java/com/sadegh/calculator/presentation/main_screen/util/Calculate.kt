@@ -17,7 +17,7 @@ fun calculateResult(inputs: List<String>): String {
 
     val formattedInputs = inputs.toMutableList().format()
 
-    val operatorsPriorities = Operator.priorities
+    val operatorsPriorities = Input.OperatorInput.priorities
 
     return calculateResult(formattedInputs, operatorsPriorities)
 
@@ -84,7 +84,7 @@ private infix fun MutableList<String>.applyOperatorsWithPriority(priority: Int) 
         val input = this[index]
 
         //operator is null when it is not equal to an operator in Operator class
-        val operator = Operator.getOperatorFromSymbolOrNull(input)
+        val operator = Input.OperatorInput.getOperatorFromSymbolOrNull(input)
 
         if (operator != null && operator.priority == priority) {
 
@@ -97,7 +97,7 @@ private infix fun MutableList<String>.applyOperatorsWithPriority(priority: Int) 
     }
 }
 
-private fun MutableList<String>.applyOperator(operator: Operator, operatorIndex: Int) {
+private fun MutableList<String>.applyOperator(operator: Input.OperatorInput, operatorIndex: Int) {
 
     val nextInput = this[operatorIndex + 1]
     val beforeInput = this[operatorIndex - 1]
@@ -159,9 +159,9 @@ private fun MutableList<String>.changeInputsWhenInputIsNeperNumberAndGetNewIndex
     return neperIndex
 }
 
-private fun operate(number1: Double, number2: Double, operator: Operator): String {
+private fun operate(number1: Double, number2: Double, operator: Input.OperatorInput): String {
 
-    if (number2 == 0.0 && operator == Operator.DivisionOperator) {
+    if (number2 == 0.0 && operator == Input.OperatorInput.BasicOperatorInput.DivisionOperatorInput) {
         throw ArithmeticException(ResultType.UNDEFINED)
     }
 

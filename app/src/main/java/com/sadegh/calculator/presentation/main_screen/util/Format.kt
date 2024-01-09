@@ -4,6 +4,10 @@ import java.text.DecimalFormat
 
 fun formatInput(input: List<String>): String {
 
+    if (input.isEmpty()) {
+        return "0"
+    }
+
     val inputAsStringAfterFirstFormat = separateAllThreeDigitsOfAllNumbersWithComma(input)
         .joinToString("")
         .dropLast(if (input.last() == "=") 1 else 0)
@@ -114,7 +118,7 @@ fun separateAllThreeDigitsOfAllNumbersWithComma(input: List<String>): List<Strin
 
     return input.map { numberOrOperator ->
 
-        if (numberOrOperator in arrayOf("÷", "x", "-", "+", "=", "%")||numberOrOperator=="e") {
+        if (numberOrOperator in arrayOf("÷", "x", "-", "+", "=", "%") || numberOrOperator == "e") {
             return@map numberOrOperator
         }
 

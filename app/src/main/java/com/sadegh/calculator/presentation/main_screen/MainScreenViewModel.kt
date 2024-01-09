@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sadegh.calculator.presentation.main_screen.util.Input
 import com.sadegh.calculator.presentation.main_screen.util.ResultType
 import com.sadegh.calculator.presentation.main_screen.util.calculateResult
 import com.sadegh.calculator.presentation.main_screen.util.formatInput
@@ -21,11 +22,11 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
     private var lastUserEvent: UserEvent? = null
 
-    private val input = MutableStateFlow(listOf("0"))
+    private val input = MutableStateFlow(emptyList<Input>())
 
     val formattedInput = input.transform {
 
-        val formattedInput = formatInput(it)
+        val formattedInput = formatInput(it.map { input -> input.toString() })
 
         emit(formattedInput)
     }
@@ -40,7 +41,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
         val isLastInputABasicOperator = isLastInputABasicOperator()
         val isLastUseEventNotOnBackspaceClick = lastUserEvent !is UserEvent.OnBackspaceButtonClick
 
-        if (isLastInputABasicOperator && isLastUseEventNotOnBackspaceClick) {
+        if (isLastInputABasicOperator && isLastUseEventNotOnBackspaceClick || isLastInputEqual()) {
 
             return@transform
 
@@ -89,7 +90,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
                 20 to 27.5.sp
             )
 
-            if (it.last() == '=') {
+            if (isLastInputEqual()) {
                 emit(32.sp)
                 return@transform
             }
@@ -113,7 +114,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
     val resultFontSize = input
         .transform {
 
-            if (it.last() == "=" && result.value != ResultType.UNDEFINED) {
+            if (isLastInputEqual() && result.value != ResultType.UNDEFINED) {
                 emit(45.sp)
             } else {
                 emit(35.sp)
@@ -127,7 +128,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
     val inputTextColor = input
         .transform {
-            val color = if (it.last() == "=") Color.Gray else Color.White
+            val color = if (isLastInputEqual()) Color.Gray else Color.White
             emit(color)
         }.stateIn(
             viewModelScope,
@@ -137,7 +138,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
     val resultTextColor = input
         .transform {
-            val color = if (it.last() == "=") Color.White else Color.Gray
+            val color = if (isLastInputEqual()) Color.White else Color.Gray
             emit(color)
         }.stateIn(
             viewModelScope,
@@ -146,14 +147,15 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
         )
 
     private val lastElement
-        get() = input.value.last()
+        get() = input.value.lastOrNull()
 
-    private fun isClean() = input.value == listOf("0")
+    private fun isClean() = input.value.isEmpty()
 
-    private fun isLastInputABasicOperator() = lastElement in arrayOf("÷", "x", "-", "+")
-
-    private fun isLastInputPercent() = lastElement == "%"
-    private fun isLastInputEqual() = lastElement == "="
+    private fun isLastInputABasicOperator() = lastElement is Input.OperatorInput.BasicOperatorInput
+    private fun isLastInputPercent() = lastElement is Input.OperatorInput.PercentageOperatorInput
+    private fun isLastInputEqual() = lastElement is Input.Equal
+    private fun isLastInputNumber() = lastElement is Input.Number
+    private fun isLastInputNeperNumber() = lastElement is Input.Number.NeperNumber
 
     fun onEvent(event: UserEvent) {
 
@@ -166,7 +168,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
             UserEvent.OnEqualButtonClick -> onEqualButtonClick()
             UserEvent.OnPointButtonClick -> onPointButtonClick()
             is UserEvent.OnNumberButtonClick -> onNumberButtonClick(event.number)
-            is UserEvent.OnOperatorButtonClick -> onOperatorButtonClick(event.symbol)
+            is UserEvent.OnOperatorButtonClick -> onOperatorButtonClick(event.operator)
         }
     }
 
@@ -177,7 +179,7 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
     private fun onClearButtonClick() {
 
-        input.value = listOf("0")
+        input.value = emptyList()
     }
 
     private fun onBackspaceButtonClick() {
@@ -186,67 +188,60 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
 
             isLastInputEqual() -> return
 
-            input.value.singleOrNull()?.length == 1 -> input.value = listOf("0")
+            lastElement.toString().length == 1 -> {
+                input.value = input.value.dropLast(1)
 
-            lastElement.length == 1 -> input.value = input.value.dropLast(1)
-
-            else -> {
-                val newLastInput = lastElement.dropLast(1)
-                input.value = input.value.dropLast(1) + newLastInput
             }
 
+            else -> {
+
+                val newLastElement = lastElement.toString().dropLast(1)
+                input.value = input.value.dropLast(1) + Input.Number(newLastElement)
+            }
         }
     }
 
-    private fun onOperatorButtonClick(operatorSymbol: String) {
+    private fun onOperatorButtonClick(operator: Input.OperatorInput) {
 
         when {
 
-            operatorSymbol == lastElement -> return
+            operator == lastElement -> return
 
             isLastInputEqual() -> {
 
-                input.value = if (result.value != ResultType.UNDEFINED) {
-                    listOf(result.value, operatorSymbol)
+                input.value = if (result.value == ResultType.UNDEFINED) {
+                    listOf(Input.Number("0"), operator)
+
                 } else {
-                    listOf("0", operatorSymbol)
+                    val resultAsNumber = Input.Number(result.value)
+                    listOf(resultAsNumber, operator)
                 }
             }
 
-            isLastInputABasicOperator() -> {
-                input.value = input.value.dropLast(1) + operatorSymbol
-            }
+            isLastInputABasicOperator() -> input.value = input.value.dropLast(1) + operator
 
-            //last input is percentage or a number
-            else -> {
 
-                if (lastElement.last() == '.') {
+            isLastInputNumber() || isLastInputPercent() -> input.value = input.value + operator
 
-                    val lastElement = lastElement.dropLast(1)
-                    input.value = input.value.dropLast(1) + lastElement
-                }
-
-                input.value = input.value + operatorSymbol
-            }
         }
     }
 
-    private fun onNumberButtonClick(number: String) {
+    private fun onNumberButtonClick(number: Input.Number) {
 
         when {
 
-            lastElement.length == 15 -> return
+            lastElement.toString().length == 15 -> return
 
             isLastInputEqual() || isClean() -> input.value = listOf(number)
 
-            isLastInputABasicOperator() || isLastInputPercent() || number == "e" || lastElement == "e" -> {
+            isLastInputABasicOperator() || isLastInputPercent() || number is Input.Number.NeperNumber || isLastInputNeperNumber() -> {
 
                 input.value = input.value + number
             }
 
             else -> {
                 val newLastElement = "${lastElement}$number"
-                input.value = input.value.dropLast(1) + newLastElement
+                input.value = input.value.dropLast(1) + Input.Number(newLastElement)
             }
         }
     }
@@ -254,33 +249,27 @@ class MainScreenViewModel @Inject constructor() : ViewModel() {
     private fun onPointButtonClick() {
 
         when {
-            lastElement.length == 15 || "." in lastElement -> return
 
-            isLastInputEqual() -> input.value = listOf("0.")
+            lastElement.toString().length == 15 || "." in lastElement.toString() -> return
+
+            isLastInputEqual() || isClean() -> input.value = listOf(Input.Number("0."))
 
             isLastInputABasicOperator() || isLastInputPercent() -> {
-                input.value = input.value + "0."
+                input.value = input.value + Input.Number("0.")
             }
 
             else -> {
-                val newLastElement = "$lastElement."
-                input.value = input.value.dropLast(1) + newLastElement
+                val newLastElement = "${lastElement}."
+                input.value = input.value.dropLast(1) + Input.Number(newLastElement)
             }
         }
     }
 
     private fun onEqualButtonClick() {
 
-        if (isLastInputEqual()) {
-            return
+        if (!isLastInputEqual()) {
+
+            input.value = input.value + Input.Equal
         }
-
-        if (lastElement.last() == '.') {
-
-            input.value = input.value.dropLast(1)
-
-        }
-        input.value = input.value + "="
-
     }
 }
